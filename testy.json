@@ -1,0 +1,21 @@
+{
+    "setup": {
+        "notifiers": {
+            "growl": {
+                "host": "192.168.13.23",
+                "port": "9887"
+            }
+        },
+        "sleep": 15
+    },
+    "projects": {
+        "flug-ibe": {
+            "path": "/var/www/vhosts/unister/flug-ibe-fb/web-app", 
+            "test": "cd /var/www/vhosts/unister/flug-ibe-fb/tests; phpunit"
+        },
+        "mergy": {
+            "path": "/var/www/vhosts/social/mergy", 
+            "test": "cd /var/www/vhosts/social/mergy/Tests; phpunit"
+        }
+    }
+}
