@@ -41,7 +41,7 @@
  */
 
 /**
- * Notify via Growl
+ * Run the watch loop
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>

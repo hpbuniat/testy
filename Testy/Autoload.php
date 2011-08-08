@@ -46,5 +46,4 @@ function Testy_autoload($sClass) {
     @include_once $sFile;
 }
 
-
 spl_autoload_register('Testy_autoload');
