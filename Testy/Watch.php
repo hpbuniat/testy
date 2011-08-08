@@ -52,6 +52,13 @@
  class Testy_Watch {
 
      /**
+      * Notify about detected modifications
+      *
+      * @var string
+      */
+     const INFO = 'Modifications detected, running phpunit ...';
+
+     /**
       * The last-checks timestamp
       *
       * @var int
@@ -97,7 +104,7 @@
          $aRun = array();
          foreach ($this->_aStack as $oProject) {
              if ($oProject->check($iTime) === true) {
-                 $aRun[] = $oProject;
+                 $aRun[] = $oProject->notify(Testy_AbstractNotifier::INFO, self::INFO);
              }
          }
 

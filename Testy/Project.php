@@ -139,7 +139,9 @@
 
          $sDate = date('Ymd H:i:s', $iLast);
          $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "*.php" -newermt "' . $sDate . '" | wc -l');
-         if ((int) $oCommand->get() > 0) {
+         $iCount = (int) $oCommand->execute()->get();
+         unset($oCommand, $sDate);
+         if ($iCount > 0) {
              return true;
          }
 
@@ -153,11 +155,24 @@
       */
      public function run() {
          $this->_oCommand->execute();
-         foreach ($this->_aNotifiers as $oNotifier) {
-             $oNotifier->notify($this, $this->_oCommand);
-         }
+         $this->notify($this->_oCommand->isSuccess() ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $this->_oCommand->get());
 
          return $this;
      }
 
+     /**
+      * Notify all notifiers
+      *
+      * @param  string $sStatus
+      * @param  string $sText
+      *
+      * @return Testy_Project
+      */
+     public function notify($sStatus, $sText) {
+         foreach ($this->_aNotifiers as $oNotifier) {
+             $oNotifier->notify($this, $sStatus, $sText);
+         }
+
+         return $this;
+     }
  }

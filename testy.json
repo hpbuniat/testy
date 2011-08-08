@@ -2,20 +2,25 @@
     "setup": {
         "notifiers": {
             "growl": {
-                "host": "192.168.13.23",
-                "port": "9887"
+                "host": "192.168.181.121",
+                "port": "9887",
+                "password": ""
             }
         },
         "sleep": 15
     },
     "projects": {
         "flug-ibe": {
-            "path": "/var/www/vhosts/unister/flug-ibe-fb/web-app", 
-            "test": "cd /var/www/vhosts/unister/flug-ibe-fb/tests; phpunit"
+            "path": "/home/developer/storage/flug-ibe-ti/web-app", 
+            "test": "cd /home/developer/storage/flug-ibe-ti/tests; phpunit"
+        },
+        "fluege.de": {
+            "path": "/home/developer/storage/fluege.de-ti/web-app", 
+            "test": "cd /home/developer/storage/fluege.de-ti/tests; phpunit"
         },
         "mergy": {
-            "path": "/var/www/vhosts/social/mergy", 
-            "test": "cd /var/www/vhosts/social/mergy/Tests; phpunit"
+            "path": "/home/developer/github/mergy", 
+            "test": "cd /home/developer/github/mergy/Tests; phpunit"
         }
     }
 }

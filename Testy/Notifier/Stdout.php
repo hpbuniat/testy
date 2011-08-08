@@ -41,7 +41,7 @@
  */
 
 /**
- * Notifier-Abstract
+ * Notify to stdout
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
@@ -49,53 +49,15 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
-abstract class Testy_AbstractNotifier {
+class Testy_Notifier_Stdout extends Testy_AbstractNotifier {
 
     /**
-     * Message for successful-tests
-     *
-     * @var string
+     * (non-PHPdoc)
+     * @see Testy_AbstractNotifier::notify()
      */
-    const SUCCESS = 'Success';
+    public function notify(Testy_Project $oProject, $sStatus, $sText) {
+        Testy_TextUI_Output::info($oProject->getName() . ': ' . $sStatus . PHP_EOL . $sText . PHP_EOL);
 
-    /**
-     * Message for failed-tests
-     *
-     * @var string
-     */
-    const FAILED = 'Failed';
-
-    /**
-     * Message for Infos
-     *
-     * @var string
-     */
-    const INFO = 'Info';
-
-    /**
-     * The notifiers configuration
-     *
-     * @var stdClass
-     */
-    protected $_oConfig;
-
-    /**
-     * Init a Notifier
-     *
-     * @param  stdClass $oConfig
-     */
-    public function __construct(stdClass $oConfig = null) {
-        $this->_oConfig = $oConfig;
+        return $this;;
     }
-
-    /**
-     * Execute the notification
-     *
-     * @param  Testy_Project $oProject
-     * @param  string $sStatus
-     * @param  string $sText
-     *
-     * @return Testy_AbstractNotifier
-     */
-    abstract public function notify(Testy_Project $oProject, $sStatus, $sText);
 }

@@ -52,6 +52,13 @@
  class Testy_Project_Builder {
 
      /**
+      * Info after building a project
+      *
+      * @var string
+      */
+     const INFO = 'Started watching a project';
+
+     /**
       * Build a project
       *
       * @param  string $sName
@@ -67,6 +74,7 @@
              $oProject->addNotifier($oNotifier);
          }
 
+         $oProject->notify(Testy_AbstractNotifier::INFO, self::INFO);
          return $oProject;
      }
 

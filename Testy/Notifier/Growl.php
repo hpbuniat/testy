@@ -59,22 +59,36 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
     protected $_sMessage = '';
 
     /**
+     * Indicate registration status
+     *
+     * @var boolean
+     */
+    protected $_bRegistered = false;
+
+    /**
      * (non-PHPdoc)
      * @see Testy_AbstractNotifier::notify()
      */
-    public function notify(Testy_Project $oProject, Testy_Util_Command $oCommand) {
-        $sStatus = ($oCommand->isSuccess() === true) ? self::SUCCESS : self::FAILED;
+    public function notify(Testy_Project $oProject, $sStatus, $sText) {
         $sName = Testy_TextUI_Command::NAME;
+        $sProject = $oProject->getName();
 
-        $this->_sMessage = pack('c2nc2', 1, 0, strlen($sName), 1, 1)
-                         . $sName
-                         . pack('n', strlen($sStatus))
-                         . $sStatus
-                         . pack('c', 1);
+        if ($this->_bRegistered !== true) {
+            $this->_sMessage = pack('c2nc2', 1, 0, strlen($sName), 3, 3)
+                             . $sName
+                             . pack('n', strlen(self::SUCCESS)) . self::SUCCESS
+                             . pack('n', strlen(self::FAILED)) . self::FAILED
+                             . pack('n', strlen(self::INFO)) . self::INFO
+                             . pack('c', 0)
+                             . pack('c', 1)
+                             . pack('c', 2);
 
-        $this->_send();
-        $this->_sMessage = pack('c2n5', 1, 1, 0, strlen($sStatus), strlen($oProject->getName()), strlen($oCommand->get()), strlen($sName))
-                         . $sStatus . $oProject->getName() . $oCommand->get() . $sName;
+            $this->_send();
+            $this->_bRegistered = true;
+        }
+
+        $this->_sMessage = pack('c2n5', 1, 1, 0, strlen($sStatus), strlen($sProject), strlen($sText), strlen($sName))
+                         . $sStatus . $sProject . $sText . $sName;
         $this->_send();
 
         return $this;;
@@ -86,9 +100,7 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
      * @return Testy_AbstractNotifier
      */
     private function _send() {
-        if (isset($this->_oConfig->password) === true) {
-            $this->_sMessage .= pack('H32', md5($this->_sMessage . $this->_oConfig->password));
-        }
+        $this->_sMessage .= pack('H32', md5($this->_sMessage . $this->_oConfig->password));
 
         $rSocket = fsockopen('udp://' . $this->_oConfig->host, $this->_oConfig->port);
         fwrite($rSocket, $this->_sMessage);

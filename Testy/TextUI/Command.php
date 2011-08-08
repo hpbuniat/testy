@@ -122,14 +122,13 @@ class Testy_TextUI_Command {
      * @param  boolean $exit
      *
      * @return Testy_TextUI_Command
-     *
-     * @TODO Cleanup !
      */
     public function run(array $argv, $exit = true) {
         $this->_handleArguments($argv);
 
         $aNotifiers = array(
-            new Testy_Notifier_Growl($this->_aArguments['config']->setup->notifiers->growl)
+            new Testy_Notifier_Growl($this->_aArguments['config']->setup->notifiers->growl),
+            new Testy_Notifier_Stdout(),
         );
 
         $oWatch = new Testy_Watch();
@@ -151,8 +150,6 @@ class Testy_TextUI_Command {
      * @param array $aParameters
      *
      * @return Testy_TextUI_Command
-     *
-     * @TODO Cleanup!
      */
     protected function _handleArguments(array $aParameters) {
         self::printVersionString();
@@ -205,9 +202,8 @@ class Testy_TextUI_Command {
      * @return void
      */
     public static function showHelp() {
-        echo <<<EOT
-Usage: Testy [--config=testy.json]
-EOT;
+        self::printVersionString();
+        Testy_TextUI_Output::info('Usage: Testy [--config=testy.json]');
     }
 
     /**
@@ -216,6 +212,6 @@ EOT;
      * @return void
      */
     public static function printVersionString() {
-        Testy_TextUI_Output::info('Testy - a continous test-runner (Version: @package_version@)');
+        Testy_TextUI_Output::info('Testy - a continuous test-runner (Version: @package_version@)');
     }
 }
