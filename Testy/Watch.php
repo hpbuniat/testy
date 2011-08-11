@@ -49,74 +49,74 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
- class Testy_Watch {
+class Testy_Watch {
 
-     /**
-      * Notify about detected modifications
-      *
-      * @var string
-      */
-     const INFO = 'Modifications detected, running phpunit ...';
+    /**
+     * Notify about detected modifications
+     *
+     * @var string
+     */
+    const INFO = 'Modifications detected, running phpunit ...';
 
-     /**
-      * The last-checks timestamp
-      *
-      * @var int
-      */
-     private $_iTimestamp;
+    /**
+     * The last-checks timestamp
+     *
+     * @var int
+     */
+    private $_iTimestamp;
 
-     /**
-      * The Stack of projects to check
-      *
-      * @var array
-      */
-     private $_aStack = array();
+    /**
+     * The Stack of projects to check
+     *
+     * @var array
+     */
+    private $_aStack = array();
 
-     /**
-      * Init some defaults
-      */
-     public function __construct() {
-         $this->_iTimestamp = time();
-         $this->_aStack = array();
-     }
+    /**
+     * Init some defaults
+     */
+    public function __construct() {
+        $this->_iTimestamp = time();
+        $this->_aStack = array();
+    }
 
-     /**
-      * Add a project to watch
-      *
-      * @param  Testy_Project $oProject
-      *
-      * @return Testy_Watch
-      */
-     public function add(Testy_Project $oProject) {
-         $this->_aStack[] = $oProject;
-         return $this;
-     }
+    /**
+     * Add a project to watch
+     *
+     * @param  Testy_Project $oProject
+     *
+     * @return Testy_Watch
+     */
+    public function add(Testy_Project $oProject) {
+        $this->_aStack[] = $oProject;
+        return $this;
+    }
 
-     /**
-      * Run the watch-loop
-      *
-      * @return Testy_Watch
-      */
-     public function loop() {
-         $iTime = $this->_iTimestamp;
-         $this->_iTimestamp = time();
+    /**
+     * Run the watch-loop
+     *
+     * @return Testy_Watch
+     */
+    public function loop() {
+        $iTime = $this->_iTimestamp;
+        $this->_iTimestamp = time();
 
-         $aRun = array();
-         foreach ($this->_aStack as $oProject) {
-             if ($oProject->check($iTime) === true) {
-                 $aRun[] = $oProject->notify(Testy_AbstractNotifier::INFO, self::INFO);
-             }
-         }
+        $aRun = array();
+        foreach ($this->_aStack as $oProject) {
+            if ($oProject->check($iTime) === true) {
+                $aRun[] = $oProject->notify(Testy_AbstractNotifier::INFO, self::INFO);
+            }
+        }
 
-         if (empty($aRun) !== true) {
-             $oParallel = new Testy_Util_Parallel($aRun);
-             $oParallel->run(array(
-                 'run'
-             ));
+        if (empty($aRun) !== true) {
+            $oParallel = new Testy_Util_Parallel($aRun);
+            $oParallel->run(array(
+                'run'
+            ));
 
-             unset($oParallel);
-         }
+            unset($oParallel);
+        }
 
-         return $this;
-     }
- }
+        return $this;
+    }
+}

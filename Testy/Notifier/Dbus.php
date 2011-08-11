@@ -82,7 +82,7 @@ class Testy_Notifier_Dbus extends Testy_AbstractNotifier {
                 $sText,
                 new DBusArray(DBus::STRING, array()),
                 new DBusDict(DBus::VARIANT, array()),
-                1000
+                -1
             );
         }
 

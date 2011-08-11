@@ -43,7 +43,7 @@
 
 (defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
 if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(MERGY_PATH . PATH_SEPARATOR . get_include_path());
+    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
 }
 
 require 'Testy' . DIRECTORY_SEPARATOR . 'Autoload.php';

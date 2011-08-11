@@ -73,7 +73,9 @@ class Testy_TextUI_Command {
     const CONFIG_FILE = 'testy.json';
 
     /**
+     * The application name
      *
+     * @var string
      */
     const NAME = 'testy';
 
@@ -82,15 +84,14 @@ class Testy_TextUI_Command {
      *
      * @var array
      */
-    protected static $_aArguments = array(
-    );
+    protected $_aArguments = array();
 
     /**
      * Long-Options
      *
      * @var array
      */
-    protected static $_aLongOptions = array(
+    protected $_aLongOptions = array(
         'help' => null,
         'verbose' => null,
         'config=' => null,
@@ -102,8 +103,7 @@ class Testy_TextUI_Command {
      *
      * @var array
      */
-    protected static $_aOptions = array(
-    );
+    protected $_aOptions = array();
 
     /**
      * Main entry
@@ -129,6 +129,7 @@ class Testy_TextUI_Command {
         $aNotifiers = array(
             new Testy_Notifier_Growl($this->_aArguments['config']->setup->notifiers->growl),
             new Testy_Notifier_Stdout(),
+            new Testy_Notifier_Dbus()
         );
 
         $oWatch = new Testy_Watch();
@@ -136,7 +137,7 @@ class Testy_TextUI_Command {
             $oWatch->add(Testy_Project_Builder::build($sProject, $oConfig, $aNotifiers));
         }
 
-        while(true) {
+        while(true ) {
             $oWatch->loop();
             sleep($this->_aArguments['config']->setup->sleep);
         }
@@ -156,27 +157,29 @@ class Testy_TextUI_Command {
 
         $oConsole = new Console_Getopt();
         try {
-            self::$_aOptions = @$oConsole->getopt($aParameters, '', array_keys(self::$_aLongOptions));
+            $this->_aOptions = @$oConsole->getopt($aParameters, '', array_keys($this->_aLongOptions));
         }
         catch (RuntimeException $e) {
             Testy_TextUI_Output::info($e->getMessage());
         }
 
-        if (self::$_aOptions instanceof PEAR_Error) {
-            Testy_TextUI_Output::error(self::$_aOptions->getMessage());
+        if ($this->_aOptions instanceof PEAR_Error) {
+            Testy_TextUI_Output::error($this->_aOptions->getMessage());
         }
 
-        foreach (self::$_aOptions[0] as $option) {
-            switch ($option[0]) {
-                case '--config':
-                    self::$_aArguments['config'] = $option[1];
-                    break;
+        if (empty($this->_aOptions[0]) !== true) {
+            foreach ($this->_aOptions[0] as $option) {
+                switch ($option[0]) {
+                    case '--config' :
+                        $this->_aArguments['config'] = $option[1];
+                        break;
 
-                case '--help':
-                case '--version':
-                    self::showHelp();
-                    exit(self::SUCCESS_EXIT);
-                    break;
+                    case '--help' :
+                    case '--version' :
+                        self::showHelp();
+                        exit(self::SUCCESS_EXIT);
+                        break;
+                }
             }
         }
 
