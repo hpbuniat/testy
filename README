@@ -1,3 +1,5 @@
 Testy - a continuous test-runner
 
 Testy is a one-purpose tool - run tests and notify!
+
+The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/package/DBus) by Derick Rethans
