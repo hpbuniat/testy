@@ -1,0 +1,25 @@
+{
+    "setup": {
+        "notifiers": {
+            "growl": {
+                "host": "127.0.0.1",
+                "port": "9887",
+                "password": "",
+                "enabled": true
+            },
+            "dbus": {
+                "enabled": true
+            },
+            "stdout": {
+                "enabled": true
+            }
+        },
+        "sleep": 5
+    },
+    "projects": {
+        "testy": {
+            "path": "~/workspace/testy", 
+            "test": "cd ~/workspace/testy/; phpunit"
+        }
+    }
+}
