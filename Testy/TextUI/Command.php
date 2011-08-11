@@ -107,30 +107,29 @@ class Testy_TextUI_Command {
 
     /**
      * Main entry
-     *
-     * @param boolean $exit
      */
-    public static function main($exit = true) {
+    public static function main() {
         $command = new Testy_TextUI_Command();
-        $command->run($_SERVER['argv'], $exit);
+        $command->run($_SERVER['argv']);
     }
 
     /**
      * Run Testy
      *
      * @param  array   $argv
-     * @param  boolean $exit
      *
      * @return Testy_TextUI_Command
      */
-    public function run(array $argv, $exit = true) {
+    public function run(array $argv) {
         $this->_handleArguments($argv);
 
-        $aNotifiers = array(
-            new Testy_Notifier_Growl($this->_aArguments['config']->setup->notifiers->growl),
-            new Testy_Notifier_Stdout(),
-            new Testy_Notifier_Dbus()
-        );
+        $aNotifiers = array();
+        foreach ($this->_aArguments['config']->setup->notifiers as $sNotifier => $oConfig) {
+            if (isset($oConfig->enabled) === true and $oConfig->enabled == true) {
+                $sNotifier = 'Testy_Notifier_' . ucfirst($sNotifier);
+                $aNotifiers[] = new $sNotifier($oConfig);
+            }
+        }
 
         $oWatch = new Testy_Watch();
         foreach ($this->_aArguments['config']->projects as $sProject => $oConfig) {
