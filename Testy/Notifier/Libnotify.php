@@ -76,6 +76,5 @@ class Testy_Notifier_Libnotify extends Testy_AbstractNotifier {
         unset($oCommand, $sExecute);
 
         return $this;
-        ;
     }
 }
