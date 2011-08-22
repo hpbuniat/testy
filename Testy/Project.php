@@ -66,6 +66,13 @@ class Testy_Project {
     private $_sPath = null;
 
     /**
+     * The find pattern to detect modification
+     *
+     * @var string
+     */
+    private $_sPattern = '*.php';
+
+    /**
      * The projects command wrapper
      *
      * @var Testy_Util_Command
@@ -121,6 +128,9 @@ class Testy_Project {
     public function config(stdClass $oConfig) {
         $this->_sPath = $oConfig->path;
         $this->_oCommand->command($oConfig->test);
+        if (isset($oConfig->find) === true) {
+            $this->_sPattern = $oConfig->find;
+        }
 
         return $this;
     }
@@ -138,7 +148,7 @@ class Testy_Project {
         }
 
         $sDate = date('Ymd H:i:s', $iLast);
-        $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "*.php" -newermt "' . $sDate . '" | wc -l');
+        $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '" | wc -l');
         $iCount = (int) $oCommand->execute()->get();
         unset($oCommand, $sDate);
         if ($iCount > 0) {
@@ -163,8 +173,8 @@ class Testy_Project {
     /**
      * Notify all notifiers
      *
-     * @param  string $sStatus
-     * @param  string $sText
+     * @param  string $sStatus The notification status
+     * @param  string $sText The text to display
      *
      * @return Testy_Project
      */

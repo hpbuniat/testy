@@ -8,7 +8,7 @@
                 "enabled": true
             },
             "dbus": {
-                "enabled": true
+                "enabled": false
             },
             "stdout": {
                 "enabled": true
@@ -22,7 +22,8 @@
     "projects": {
         "testy": {
             "path": "~/workspace/testy", 
-            "test": "cd ~/workspace/testy/; phpunit"
+            "test": "cd ~/workspace/testy/; phpunit",
+            "find": "*.php"
         }
     }
 }
