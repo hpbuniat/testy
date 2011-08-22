@@ -12,6 +12,9 @@
             },
             "stdout": {
                 "enabled": true
+            },
+            "libnotify": {
+                "enabled": true
             }
         },
         "sleep": 5
