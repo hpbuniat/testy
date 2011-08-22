@@ -165,7 +165,7 @@ class Testy_Project {
      */
     public function run() {
         $this->_oCommand->execute();
-        $this->notify($this->_oCommand->isSuccess() ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $this->_oCommand->get());
+        $this->notify(($this->_oCommand->isSuccess() === true) ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $this->_oCommand->get());
 
         return $this;
     }
