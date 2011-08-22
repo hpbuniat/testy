@@ -146,7 +146,7 @@ class Testy_Util_Parallel {
             $iChildren = count($this->_aProc);
             if ($iChildren < $this->_iThreads or $this->_iThreads === 0) {
                 $this->_aProc[$iStack] = pcntl_fork();
-                if ($this->_aProc[$iStack] == -1) {
+                if ($this->_aProc[$iStack] === -1) {
                     unset($this->_aProc[$iStack]);
                 }
                 elseif ($this->_aProc[$iStack] === 0) {
@@ -199,7 +199,7 @@ class Testy_Util_Parallel {
             $iPid = pcntl_waitpid(-1, $iStatus, WNOHANG);
             $bUnset = false;
             foreach ($this->_aProc as $sChild => $iChild) {
-                if ($iChild == $iPid) {
+                if ($iChild === $iPid) {
                     unset($this->_aProc[$sChild]);
                     $bUnset = true;
                 }

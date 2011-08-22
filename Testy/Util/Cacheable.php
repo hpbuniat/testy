@@ -109,7 +109,7 @@ abstract class Testy_Util_Cacheable {
      * @return mixed
      */
     public function get() {
-        if (file_exists($this->_sFile)) {
+        if (file_exists($this->_sFile) === true) {
             $this->_mCache = unserialize(file_get_contents($this->_sFile));
         }
         else {
