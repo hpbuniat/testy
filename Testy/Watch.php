@@ -117,6 +117,7 @@ class Testy_Watch {
             unset($oParallel);
         }
 
+        unset($aRun);
         return $this;
     }
 }

@@ -74,7 +74,8 @@ class Testy_TextUI_Output {
      * @return void
      */
     static public function info($message) {
-        print_r($message . PHP_EOL);
+        print_r($message);
+        print PHP_EOL;
     }
 
     /**

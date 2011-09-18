@@ -77,5 +77,4 @@ class Testy_Project_Builder {
         $oProject->notify(Testy_AbstractNotifier::INFO, self::INFO);
         return $oProject;
     }
-
 }

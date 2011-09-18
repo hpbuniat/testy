@@ -136,7 +136,7 @@ class Testy_TextUI_Command {
             $oWatch->add(Testy_Project_Builder::build($sProject, $oConfig, $aNotifiers));
         }
 
-        while(true ) {
+        while (true) {
             $oWatch->loop();
             sleep($this->_aArguments['config']->setup->sleep);
         }
@@ -169,12 +169,12 @@ class Testy_TextUI_Command {
         if (empty($this->_aOptions[0]) !== true) {
             foreach ($this->_aOptions[0] as $option) {
                 switch ($option[0]) {
-                    case '--config' :
+                    case '--config':
                         $this->_aArguments['config'] = $option[1];
                         break;
 
-                    case '--help' :
-                    case '--version' :
+                    case '--help':
+                    case '--version':
                         self::showHelp();
                         exit(self::SUCCESS_EXIT);
                         break;

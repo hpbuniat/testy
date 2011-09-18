@@ -87,6 +87,13 @@ class Testy_Project {
     private $_aNotifiers;
 
     /**
+     * Info-Text, if there are php-lint errors
+     *
+     * @var string
+     */
+    const LINT_ERROR = 'php-lint failed, supresing phpunit';
+
+    /**
      * Init the project
      *
      * @param  string $sName
@@ -147,15 +154,23 @@ class Testy_Project {
             $iLast = time();
         }
 
+        $bStatus = false;
         $sDate = date('Ymd H:i:s', $iLast);
-        $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '" | wc -l');
-        $iCount = (int) $oCommand->execute()->get();
-        unset($oCommand, $sDate);
-        if ($iCount > 0) {
-            return true;
+        $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '"');
+        $sReturn = trim($oCommand->execute()->get());
+        $aFiles = explode(PHP_EOL, $sReturn);
+
+        if (empty($sReturn) !== true) {
+            if ($this->_lint($aFiles) === true) {
+                $bStatus = true;
+            }
+            else {
+                $this->notify(Testy_AbstractNotifier::FAILED, self::LINT_ERROR);
+            }
         }
 
-        return false;
+        unset($oCommand, $sDate, $sReturn, $aFiles);
+        return $bStatus;
     }
 
     /**
@@ -184,5 +199,28 @@ class Testy_Project {
         }
 
         return $this;
+    }
+
+    /**
+     * Lint the modified files
+     *
+     * @param  array $aFiles
+     *
+     * @return boolean
+     */
+    protected function _lint(array $aFiles = array()) {
+        $bStatus = (empty($aFiles) === true) ? false : true;
+        array_walk($aFiles, 'trim');
+
+        foreach ($aFiles as $sFile) {
+            $oCommand = new Testy_Util_Command('php -l ' . $sFile);
+            if ($oCommand->execute()->isSuccess() !== true) {
+                $bStatus = false;
+            }
+
+            unset($oCommand);
+        }
+
+        return $bStatus;
     }
 }
