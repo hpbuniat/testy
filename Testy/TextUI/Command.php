@@ -73,6 +73,13 @@ class Testy_TextUI_Command {
     const CONFIG_FILE = 'testy.json';
 
     /**
+     * Error when there is no config-file found
+     *
+     * @var string
+     */
+    const CONFIG_ERROR = 'Error while reading the configuration!';
+
+    /**
      * The application name
      *
      * @var string
