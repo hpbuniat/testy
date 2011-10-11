@@ -94,6 +94,13 @@ class Testy_Project {
     const LINT_ERROR = 'php-lint failed, supresing phpunit';
 
     /**
+     * Info-Text, if there is no test command given
+     *
+     * @var stirng
+     */
+    const MISSING_TEST_COMMAND = 'test-command missing for project %s';
+
+    /**
      * Init the project
      *
      * @param  string $sName
@@ -133,7 +140,11 @@ class Testy_Project {
      * @return Testy_Project
      */
     public function config(stdClass $oConfig) {
-        $this->_sPath = $oConfig->path;
+        $this->_sPath = (isset($oConfig->path) === true) ? $oConfig->path : '.';
+        if (isset($oConfig->test) === false) {
+            throw new Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
+        }
+
         $this->_oCommand->command($oConfig->test);
         if (isset($oConfig->find) === true) {
             $this->_sPattern = $oConfig->find;
