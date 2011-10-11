@@ -56,7 +56,7 @@ class Testy_Watch {
      *
      * @var string
      */
-    const INFO = 'Modifications detected, running phpunit ...';
+    const INFO = 'Modifications detected, running tests ...';
 
     /**
      * The last-checks timestamp
