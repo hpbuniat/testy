@@ -73,18 +73,25 @@ class Testy_Project {
     private $_sPattern = '*.php';
 
     /**
-     * The projects command wrapper
+     * The projects config
      *
-     * @var Testy_Util_Command
+     * @var stdClass
      */
-    private $_oCommand;
+    private $_oConfig;
 
     /**
      * The notifiers to use
      *
-     * @param array
+     * @var array
      */
     private $_aNotifiers;
+
+    /**
+     * The list of modified files
+     *
+     * @var array
+     */
+    private $_aFiles = array();
 
     /**
      * Info-Text, if there are php-lint errors
@@ -107,7 +114,6 @@ class Testy_Project {
      */
     public function __construct($sName) {
         $this->_sName = $sName;
-        $this->_oCommand = new Testy_Util_Command();
         $this->_aNotifiers = array();
     }
 
@@ -145,11 +151,11 @@ class Testy_Project {
             throw new Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
         }
 
-        $this->_oCommand->command($oConfig->test);
         if (isset($oConfig->find) === true) {
             $this->_sPattern = $oConfig->find;
         }
 
+        $this->_oConfig = $oConfig;
         return $this;
     }
 
@@ -165,14 +171,14 @@ class Testy_Project {
             $iLast = time();
         }
 
-        $bStatus = false;
         $sDate = date('Ymd H:i:s', $iLast);
         $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '"');
         $sReturn = trim($oCommand->execute()->get());
-        $aFiles = explode(PHP_EOL, $sReturn);
+        $this->_aFiles = explode(PHP_EOL, $sReturn);
 
+        $bStatus = false;
         if (empty($sReturn) !== true) {
-            if ($this->_lint($aFiles) === true) {
+            if ($this->_lint() === true) {
                 $bStatus = true;
             }
             else {
@@ -180,7 +186,7 @@ class Testy_Project {
             }
         }
 
-        unset($oCommand, $sDate, $sReturn, $aFiles);
+        unset($oCommand, $sDate, $sReturn);
         return $bStatus;
     }
 
@@ -190,8 +196,10 @@ class Testy_Project {
      * @return Testy_Project
      */
     public function run() {
-        $this->_oCommand->execute();
-        $this->notify(($this->_oCommand->isSuccess() === true) ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $this->_oCommand->get());
+        $oCommand = new Testy_Util_Command();
+        $oCommand->execute($this->_oConfig->test);
+        $this->notify(($oCommand->isSuccess() === true) ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $oCommand->get());
+        unset($oCommand);
 
         return $this;
     }
@@ -215,15 +223,13 @@ class Testy_Project {
     /**
      * Lint the modified files
      *
-     * @param  array $aFiles
-     *
      * @return boolean
      */
-    protected function _lint(array $aFiles = array()) {
-        $bStatus = (empty($aFiles) === true) ? false : true;
-        array_walk($aFiles, 'trim');
+    protected function _lint() {
+        $bStatus = (empty($this->_aFiles) === true) ? false : true;
+        array_walk($this->_aFiles, 'trim');
 
-        foreach ($aFiles as $sFile) {
+        foreach ($this->_aFiles as $sFile) {
             $oCommand = new Testy_Util_Command('php -l ' . $sFile);
             if ($oCommand->execute()->isSuccess() !== true) {
                 $bStatus = false;

@@ -90,7 +90,7 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
         $oConfig = new stdClass;
         try {
             $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail();
+            $this->fail('an exception should have been thrown, if no test-command ist configured');
         }
         catch (Exception $e) {
             $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());

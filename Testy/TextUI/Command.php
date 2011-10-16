@@ -123,7 +123,7 @@ class Testy_TextUI_Command {
     /**
      * Run Testy
      *
-     * @param  array   $argv
+     * @param  array $argv
      *
      * @return Testy_TextUI_Command
      */
