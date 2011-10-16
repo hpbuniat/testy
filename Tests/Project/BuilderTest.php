@@ -54,7 +54,7 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
     /**
      * An empty dummy config
      *
-     * @var unknown_type
+     * @var stdClass
      */
     protected $_oConfig;
 
