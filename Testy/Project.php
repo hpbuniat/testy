@@ -112,7 +112,7 @@ class Testy_Project {
      *
      * @param  string $sName
      */
-    public function __construct($sName) {
+    public function __construct($sName = '') {
         $this->_sName = $sName;
         $this->_aNotifiers = array();
     }

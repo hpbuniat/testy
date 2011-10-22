@@ -69,7 +69,7 @@ class Testy_Notifier_Libnotify extends Testy_AbstractNotifier {
      * @see Testy_AbstractNotifier::notify()
      */
     public function notify(Testy_Project $oProject, $sStatus, $sText) {
-        $sExecute = sprintf('notify-send --icon=%s \'%s\' \'%s\'', $this->_aIcons[$sStatus], $oProject->getName(), $sText);
+        $sExecute = sprintf('notify-send --icon=%s \'%s\' \'%s\'', $this->_aIcons[$sStatus], addslashes($oProject->getName()), addslashes($sText));
 
         $oCommand = new Testy_Util_Command();
         $oCommand->execute($sExecute);
