@@ -9,7 +9,7 @@ The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/packag
 "testy": {
     "path": "~/workspace/Testy", 
     "test": "cd ~/workspace/testy; phpunit",
-    "syntax": "php -l",
+    "syntax": "php -l $file",
     "find": "*.php"
 }
 
