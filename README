@@ -4,7 +4,7 @@ Testy is a one-purpose tool - run tests and notify!
 
 The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/package/DBus) by Derick Rethans
 
-== Project-Configuration ==
+## Project-Configuration ##
 
 "testy": {
     "path": "~/workspace/Testy", 
@@ -13,12 +13,12 @@ The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/packag
     "find": "*.php"
 }
 
-== Options ==
+## Options ##
 path:   The path to look for changed files
 find:   The find-pattern to look to changed files
 syntax: Command to do a syntax-check (skips testing on error)
 test:   The test to execute on changed files
-    supports for placeholders:
+    support for placeholders:
         $file       Each file that changed
         $project    The projects name
         $time       The current timestmap
