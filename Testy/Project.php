@@ -94,11 +94,25 @@ class Testy_Project {
     private $_aFiles = array();
 
     /**
-     * Info-Text, if there are php-lint errors
+     * Indicate, if the test-command should be applied on each changed file
+     *
+     * @var boolean
+     */
+    private $_bTestSingle = false;
+
+    /**
+     * Info-Text, if there are lint errors
      *
      * @var string
      */
-    const LINT_ERROR = 'php-lint failed, supresing phpunit';
+    const LINT_ERROR = 'linting the changed files failed, suppressing test';
+
+    /**
+     * Info-Text, if the test-command is repeated
+     *
+     * @var string
+     */
+    const REPEAT = 'repeating test-command without a specific file';
 
     /**
      * Info-Text, if there is no test command given
@@ -106,6 +120,13 @@ class Testy_Project {
      * @var stirng
      */
     const MISSING_TEST_COMMAND = 'test-command missing for project %s';
+
+    /**
+     * Notify about detected modifications
+     *
+     * @var string
+     */
+    const INFO = 'Modifications detected, running tests ...';
 
     /**
      * Init the project
@@ -148,7 +169,7 @@ class Testy_Project {
     public function config(stdClass $oConfig) {
         $this->_sPath = (isset($oConfig->path) === true) ? $oConfig->path : '.';
         if (isset($oConfig->test) === false) {
-            throw new Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
+            throw new Testy_Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
         }
 
         if (isset($oConfig->find) === true) {
@@ -167,27 +188,18 @@ class Testy_Project {
      * @return boolean
      */
     public function check($iLast = 0) {
-        if ($iLast === 0) {
-            $iLast = time();
-        }
-
         $sDate = date('Ymd H:i:s', $iLast);
         $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '"');
         $sReturn = trim($oCommand->execute()->get());
-        $this->_aFiles = explode(PHP_EOL, $sReturn);
 
-        $bStatus = false;
+        $this->_aFiles = array();
         if (empty($sReturn) !== true) {
-            if ($this->_lint() === true) {
-                $bStatus = true;
-            }
-            else {
-                $this->notify(Testy_AbstractNotifier::FAILED, self::LINT_ERROR);
-            }
+            $this->_aFiles = explode(PHP_EOL, $sReturn);
+            array_walk($this->_aFiles, 'trim');
         }
 
         unset($oCommand, $sDate, $sReturn);
-        return $bStatus;
+        return $this;
     }
 
     /**
@@ -196,10 +208,39 @@ class Testy_Project {
      * @return Testy_Project
      */
     public function run() {
-        $oCommand = new Testy_Util_Command();
-        $oCommand->execute($this->_oConfig->test);
-        $this->notify(($oCommand->isSuccess() === true) ? Testy_AbstractNotifier::SUCCESS : Testy_AbstractNotifier::FAILED, $oCommand->get());
-        unset($oCommand);
+        if (empty($this->_aFiles) === true) {
+            return $this;
+        }
+
+        $this->notify(Testy_AbstractNotifier::INFO, self::INFO);
+
+        $bLint = (empty($this->_oConfig->syntax) !== true);
+        if ($bLint === true) {
+            $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->syntax);
+            try {
+                $oRunner->run();
+            }
+            catch (Testy_Project_Test_Exception $oException) {
+                $this->notify(Testy_AbstractNotifier::FAILED, self::LINT_ERROR);
+            }
+
+            unset($oRunner);
+        }
+
+        $bRepeat = (empty($this->_oConfig->repeat) !== true and $this->_oConfig->test == true);
+        $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->test);
+        try {
+            $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
+            if ($bRepeat === true) {
+                $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
+                $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
+            }
+        }
+        catch (Testy_Project_Test_Exception $oException) {
+            $this->notify(Testy_AbstractNotifier::FAILED, $oException->getMessage());
+        }
+
+        unset($oRunner);
 
         return $this;
     }
@@ -218,26 +259,5 @@ class Testy_Project {
         }
 
         return $this;
-    }
-
-    /**
-     * Lint the modified files
-     *
-     * @return boolean
-     */
-    protected function _lint() {
-        $bStatus = (empty($this->_aFiles) === true) ? false : true;
-        array_walk($this->_aFiles, 'trim');
-
-        foreach ($this->_aFiles as $sFile) {
-            $oCommand = new Testy_Util_Command('php -l ' . $sFile);
-            if ($oCommand->execute()->isSuccess() !== true) {
-                $bStatus = false;
-            }
-
-            unset($oCommand);
-        }
-
-        return $bStatus;
     }
 }

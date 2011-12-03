@@ -41,7 +41,7 @@
  */
 
 /**
- * Run the watch loop
+ * Base class for 'userland'-exections
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
@@ -49,59 +49,6 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
-class Testy_Watch {
+ class Testy_Exception extends Exception {
 
-    /**
-     * The last-checks timestamp
-     *
-     * @var int
-     */
-    private $_iTimestamp;
-
-    /**
-     * The Stack of projects to check
-     *
-     * @var array
-     */
-    private $_aStack = array();
-
-    /**
-     * Init some defaults
-     */
-    public function __construct() {
-        $this->_iTimestamp = time();
-        $this->_aStack = array();
-    }
-
-    /**
-     * Add a project to watch
-     *
-     * @param  Testy_Project $oProject
-     *
-     * @return Testy_Watch
-     */
-    public function add(Testy_Project $oProject) {
-        $this->_aStack[] = $oProject;
-        return $this;
-    }
-
-    /**
-     * Run the watch-loop
-     *
-     * @return Testy_Watch
-     */
-    public function loop() {
-        $iTime = $this->_iTimestamp;
-        $this->_iTimestamp = time();
-
-        $oParallel = new Testy_Util_Parallel($this->_aStack);
-        $oParallel->run(array(
-            'check' =>  $iTime,
-            'run'
-        ));
-
-        unset($oParallel);
-
-        return $this;
-    }
-}
+ }

@@ -70,22 +70,24 @@ class Testy_TextUI_Output {
      * Print an Info
      *
      * @param  string $message
+     * @param  boolean $bReturn
      *
      * @return void
      */
-    static public function info($message) {
-        print_r($message);
-        print PHP_EOL;
+    static public function info($message, $bReturn = false) {
+        $sPrint = print_r($message, true);
+        return print_r($sPrint . PHP_EOL, $bReturn);
     }
 
     /**
      * Write to ouput
      *
      * @param  string $message
+     * @param  boolean $bReturn
      *
      * @return void
      */
-    static public function write($message) {
-        print_r($message);
+    static public function write($message, $bReturn = false) {
+        return print_r($message, $bReturn);
     }
 }

@@ -15,6 +15,10 @@
             },
             "libnotify": {
                 "enabled": true
+            },
+            "file": {
+                "enabled": true,
+                "path": "~/workspace/testy/"
             }
         },
         "sleep": 5
@@ -24,6 +28,16 @@
             "path": "~/workspace/testy", 
             "test": "cd ~/workspace/testy/; phpunit",
             "find": "*.php"
+        },
+        "testy-jshint": {
+            "path": "~/workspace/testy", 
+            "test": "jshint $file --config hint-ci.json",
+            "find": "*.js"
+        },
+        "testy-csslint": {
+            "path": "~/workspace/testy", 
+            "test": "node csslint.js --quiet $file",
+            "find": "*.css"
         }
     }
 }

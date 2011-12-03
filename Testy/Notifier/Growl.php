@@ -66,6 +66,13 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
     protected $_bRegistered = false;
 
     /**
+     * Maximum message length
+     *
+     * @var int
+     */
+    const MESSAGE_MAX_LENGTH = 512;
+
+    /**
      * (non-PHPdoc)
      * @see Testy_AbstractNotifier::notify()
      */
@@ -87,11 +94,16 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
             $this->_bRegistered = true;
         }
 
+        $sText = $sStatus . PHP_EOL . PHP_EOL . trim($sText);
+        if (strlen($sText) > self::MESSAGE_MAX_LENGTH) {
+            $sText = substr($sText, 0, self::MESSAGE_MAX_LENGTH);
+        }
+
         $this->_sMessage = pack('c2n5', 1, 1, 0, strlen($sStatus), strlen($sProject), strlen($sText), strlen($sName))
                          . $sStatus . $sProject . $sText . $sName;
         $this->_send();
 
-        return $this;;
+        return $this;
     }
 
     /**

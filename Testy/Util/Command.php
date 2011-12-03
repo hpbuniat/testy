@@ -116,6 +116,10 @@ class Testy_Util_Command {
         }
 
         $this->_iStatus = pclose($rCommand);
+        if (defined('VERBOSE') === true and VERBOSE === true) {
+            Testy_TextUI_Output::info($this->_iStatus);
+        }
+
         return $this;
     }
 

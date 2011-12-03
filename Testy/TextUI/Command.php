@@ -176,6 +176,10 @@ class Testy_TextUI_Command {
         if (empty($this->_aOptions[0]) !== true) {
             foreach ($this->_aOptions[0] as $option) {
                 switch ($option[0]) {
+                    case '--verbose':
+                        define('VERBOSE', true);
+                        break;
+
                     case '--config':
                         $this->_aArguments['config'] = $option[1];
                         break;

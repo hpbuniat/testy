@@ -175,8 +175,13 @@ class Testy_Util_Parallel {
      * @return ParallelTests
      */
     private function _execute($aMethods, $iStack) {
-        foreach ($aMethods as $sMethod) {
-            $this->_aStack[$iStack]->$sMethod();
+        foreach ($aMethods as $mKey => $mValue) {
+            if (is_numeric($mKey) === true) {
+                $this->_aStack[$iStack]->$mValue();
+            }
+            else {
+                $this->_aStack[$iStack]->$mKey($mValue);
+            }
         }
 
         $bPut = shm_put_var($this->_rShared, $iStack, gzcompress(serialize($this->_aStack[$iStack])));
