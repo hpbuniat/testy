@@ -77,7 +77,9 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
      * Test successful project creation
      */
     public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array());
+        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
+            $this->getMock('Testy_Notifier_Stdout')
+        ));
         $this->assertInstanceOf('Testy_Project', $oProject);
         $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
         unset($oProject);
