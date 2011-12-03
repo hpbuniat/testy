@@ -266,4 +266,13 @@ class Testy_Project {
 
         return $this;
     }
+
+    /**
+     * Get the modified files
+     *
+     * @return array
+     */
+    public function getFiles() {
+        return $this->_aFiles;
+    }
 }

@@ -5,6 +5,11 @@
  */
 class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
 
+    /**
+     * Project name
+     *
+     * @var string
+     */
     const PROJECT_NAME = 'Testy_Test';
 
     /**
@@ -55,19 +60,28 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @todo Implement testCheck().
+     * Test the check command
+     *
+     * @depends testAddNotifier
      */
     public function testCheck() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp';
+        $oConfig->path = '/tmp';
+        $oConfig->find = '*';
+
+        $this->assertInstanceOf('Testy_Project', $this->object->config($oConfig));
+        $this->assertInstanceOf('Testy_Project', $this->object->check(0));
+        $this->assertNotEmpty($this->object->getFiles());
     }
 
     /**
-     * @todo Implement testRun().
+     * Test run
+     *
+     * @depends testCheck
      */
     public function testRun() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $this->assertInstanceOf('Testy_Project', $this->object->run());
     }
 
     /**
