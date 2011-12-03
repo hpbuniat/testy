@@ -96,7 +96,7 @@ class Testy_Watch {
 
         $oParallel = new Testy_Util_Parallel($this->_aStack);
         $oParallel->run(array(
-            'check' =>  $iTime,
+            'check' => $iTime,
             'run'
         ));
 

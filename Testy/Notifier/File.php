@@ -61,6 +61,7 @@ class Testy_Notifier_File extends Testy_AbstractNotifier {
         touch($sFile);
         file_put_contents($sFile, $sContent, FILE_APPEND);
 
-        return $this;;
+        return $this;
+        ;
     }
 }

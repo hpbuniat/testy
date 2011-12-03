@@ -49,6 +49,6 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
- class Testy_Project_Test_Exception extends Testy_Exception {
+class Testy_Project_Test_Exception extends Testy_Exception {
 
- }
+}

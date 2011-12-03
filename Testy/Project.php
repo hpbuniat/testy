@@ -165,6 +165,8 @@ class Testy_Project {
      * @param  stdClass $oConfig
      *
      * @return Testy_Project
+     *
+     * @throws Testy_Exception If there are problems with the config
      */
     public function config(stdClass $oConfig) {
         $this->_sPath = (isset($oConfig->path) === true) ? $oConfig->path : '.';
@@ -214,6 +216,7 @@ class Testy_Project {
 
         $this->notify(Testy_AbstractNotifier::INFO, self::INFO);
 
+        $bRun = true;
         $bLint = (empty($this->_oConfig->syntax) !== true);
         if ($bLint === true) {
             $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->syntax);
@@ -221,26 +224,29 @@ class Testy_Project {
                 $oRunner->run();
             }
             catch (Testy_Project_Test_Exception $oException) {
+                $bRun = false;
                 $this->notify(Testy_AbstractNotifier::FAILED, self::LINT_ERROR);
             }
 
             unset($oRunner);
         }
 
-        $bRepeat = (empty($this->_oConfig->repeat) !== true and $this->_oConfig->test == true);
-        $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->test);
-        try {
-            $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
-            if ($bRepeat === true) {
-                $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
-                $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
+        if ($bRun === true) {
+            $bRepeat = (empty($this->_oConfig->repeat) !== true and $this->_oConfig->test == true);
+            $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->test);
+            try {
+                $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
+                if ($bRepeat === true) {
+                    $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
+                    $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
+                }
             }
-        }
-        catch (Testy_Project_Test_Exception $oException) {
-            $this->notify(Testy_AbstractNotifier::FAILED, $oException->getMessage());
-        }
+            catch (Testy_Project_Test_Exception $oException) {
+                $this->notify(Testy_AbstractNotifier::FAILED, $oException->getMessage());
+            }
 
-        unset($oRunner);
+            unset($oRunner);
+        }
 
         return $this;
     }
