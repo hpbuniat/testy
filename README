@@ -14,8 +14,8 @@ The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/packag
 }
 
 ## Options ##
-path:   The path to look for changed files
-find:   The find-pattern to look to changed files
+path:   The path that is checked for changed files
+find:   The find-pattern that is used to find changed files
 syntax: Command to do a syntax-check (skips testing on error)
 test:   The test to execute on changed files
     support for placeholders:

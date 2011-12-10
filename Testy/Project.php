@@ -94,13 +94,6 @@ class Testy_Project {
     private $_aFiles = array();
 
     /**
-     * Indicate, if the test-command should be applied on each changed file
-     *
-     * @var boolean
-     */
-    private $_bTestSingle = false;
-
-    /**
      * Info-Text, if there are lint errors
      *
      * @var string
@@ -183,11 +176,20 @@ class Testy_Project {
     }
 
     /**
+     * Return the config-hash
+     *
+     * @return string
+     */
+    public function getProjectHash() {
+        return md5($this->_sName . serialize($this->_oConfig) . serialize(array_keys($this->_aNotifiers)));
+    }
+
+    /**
      * Check if there were modifications
      *
      * @param  int $iLast Timestamp of last Check
      *
-     * @return boolean
+     * @return Testy_Project
      */
     public function check($iLast = 0) {
         $sDate = date('Ymd H:i:s', $iLast);

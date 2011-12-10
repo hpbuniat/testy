@@ -73,13 +73,6 @@ class Testy_TextUI_Command {
     const CONFIG_FILE = 'testy.json';
 
     /**
-     * Error when there is no config-file found
-     *
-     * @var string
-     */
-    const CONFIG_ERROR = 'Error while reading the configuration!';
-
-    /**
      * The application name
      *
      * @var string
@@ -113,6 +106,13 @@ class Testy_TextUI_Command {
     protected $_aOptions = array();
 
     /**
+     * The config-builder
+     *
+     * @var Testy_Config
+     */
+    protected $_oConfig;
+
+    /**
      * Main entry
      */
     public static function main() {
@@ -128,24 +128,31 @@ class Testy_TextUI_Command {
      * @return Testy_TextUI_Command
      */
     public function run(array $argv) {
-        $this->_handleArguments($argv);
+        try {
+            $this->_handleArguments($argv);
+            while (true) {
+                $oConfig = $this->_oConfig->get();
+                if ($this->_oConfig->wasUpdated() === true) {
+                    $aNotifiers = array();
+                    foreach ($oConfig->setup->notifiers as $sNotifier => $oNotifierConfig) {
+                        if (isset($oNotifierConfig->enabled) === true and $oNotifierConfig->enabled == true) {
+                            $sNotifier = 'Testy_Notifier_' . ucfirst($sNotifier);
+                            $aNotifiers[$sNotifier] = new $sNotifier($oNotifierConfig);
+                        }
+                    }
 
-        $aNotifiers = array();
-        foreach ($this->_aArguments['config']->setup->notifiers as $sNotifier => $oConfig) {
-            if (isset($oConfig->enabled) === true and $oConfig->enabled == true) {
-                $sNotifier = 'Testy_Notifier_' . ucfirst($sNotifier);
-                $aNotifiers[] = new $sNotifier($oConfig);
+                    $oWatch = new Testy_Watch();
+                    foreach ($oConfig->projects as $sProject => $oProjectConfig) {
+                        $oWatch->add(Testy_Project_Builder::build($sProject, $oProjectConfig, $aNotifiers));
+                    }
+                }
+
+                $oWatch->loop();
+                sleep($oConfig->setup->sleep);
             }
         }
-
-        $oWatch = new Testy_Watch();
-        foreach ($this->_aArguments['config']->projects as $sProject => $oConfig) {
-            $oWatch->add(Testy_Project_Builder::build($sProject, $oConfig, $aNotifiers));
-        }
-
-        while (true) {
-            $oWatch->loop();
-            sleep($this->_aArguments['config']->setup->sleep);
+        catch (Testy_Exception $e) {
+            Testy_TextUI_Output::error($e->getMessage());
         }
 
         return $this;
@@ -200,12 +207,7 @@ class Testy_TextUI_Command {
             $sConfig = $this->_aArguments['config'];
         }
 
-        $this->_aArguments['config'] = json_decode(file_get_contents($sConfig));
-        if (empty($this->_aArguments['config']) === true) {
-            Testy_TextUI_Output::error(self::CONFIG_ERROR);
-            exit();
-        }
-
+        $this->_oConfig = new Testy_Config($sConfig);
         return $this;
     }
 

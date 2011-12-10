@@ -100,7 +100,13 @@ class Testy_Util_Parallel {
      */
     public function __construct(array $aStack = array()) {
         $this->_iStart = microtime(true);
-        $this->_aStack = $aStack;
+        $this->_aStack = array();
+
+        // convert stack to array with numeric keys
+        foreach ($aStack as $oObject) {
+            $this->_aStack[] = $oObject;
+        }
+
         if (is_dir(Testy_Util_Cacheable::DIR) !== true) {
             mkdir(Testy_Util_Cacheable::DIR, 0744, true);
         }
@@ -176,16 +182,20 @@ class Testy_Util_Parallel {
      */
     private function _execute($aMethods, $iStack) {
         foreach ($aMethods as $mKey => $mValue) {
-            if (is_numeric($mKey) === true) {
-                $this->_aStack[$iStack]->$mValue();
+            $aParams = array();
+            $sFunc = $mValue;
+            if (is_numeric($mKey) !== true) {
+                $sFunc = $mKey;
+                $aParams = $mValue;
             }
-            else {
-                $this->_aStack[$iStack]->$mKey($mValue);
-            }
+
+            call_user_func_array(array(
+                $this->_aStack[$iStack],
+                $sFunc
+            ), $aParams);
         }
 
-        $bPut = shm_put_var($this->_rShared, $iStack, gzcompress(serialize($this->_aStack[$iStack])));
-
+        shm_put_var($this->_rShared, $iStack, gzcompress(serialize($this->_aStack[$iStack])));
         posix_kill(getmypid(), 9);
         return $this;
     }

@@ -85,6 +85,18 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Test getting a config-hash
+     *
+     * @depends testRun
+     */
+    public function testGetProjectHash() {
+        $this->assertEquals(32, strlen($this->object->getProjectHash()));
+
+        $oObject = new Testy_Project('test');
+        $this->assertNotEquals($oObject->getProjectHash(), $this->object->getProjectHash());
+    }
+
+    /**
      * @depends testAddNotifier
      */
     public function testNotify() {

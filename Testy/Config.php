@@ -41,7 +41,7 @@
  */
 
 /**
- * Run the watch loop
+ * Config-Builder
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
@@ -49,65 +49,108 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
-class Testy_Watch {
+class Testy_Config {
 
     /**
-     * The last-checks timestamp
+     * The config-file
+     *
+     * @var string
+     */
+    protected $_sFile = '';
+
+    /**
+     * The config-files mtime
      *
      * @var int
      */
-    private $_iTimestamp;
+    protected $_iMtime = 0;
 
     /**
-     * The Stack of projects to check
+     * The config
      *
-     * @var array
+     * @var stdClass
      */
-    private $_aStack = array();
+    protected $_oConfig;
 
     /**
-     * Init some defaults
+     * Indicate an updated config
+     *
+     * @var boolean
      */
-    public function __construct() {
-        $this->_iTimestamp = time();
-        $this->_aStack = array();
+    protected $_bUpdate = false;
+
+    /**
+     * Error when there is no config-file found or the config contains syntax-errors
+     *
+     * @var string
+     */
+    const CONFIG_ERROR = 'Error while reading the configuration!';
+
+    /**
+     * Create the builder
+     *
+     * @param  string $sFile
+     */
+    public function __construct($sFile = null) {
+        if (empty($sFile) !== true and file_exists($sFile) === true) {
+            $this->_sFile = $sFile;
+        }
+        else {
+            throw new Testy_Exception(self::CONFIG_ERROR);
+        }
     }
 
     /**
-     * Add a project to watch
+     * Create the config
      *
-     * @param  Testy_Project $oProject
-     *
-     * @return Testy_Watch
+     * @return Testy_Config
      */
-    public function add(Testy_Project $oProject) {
-        $sName = $oProject->getName();
-        if (empty($this->_aStack[$sName]) === true or ($oProject->getProjectHash() !== $this->_aStack[$sName]->getProjectHash())) {
-            $this->_aStack[$sName] = $oProject;
+    protected function _read() {
+        if ($this->_check() !== false) {
+            $oConfig = json_decode(file_get_contents($this->_sFile));
+            if (($this->_oConfig instanceof stdClass) !== true and empty($oConfig) === true) {
+                throw new Testy_Exception(self::CONFIG_ERROR);
+            }
+            else {
+                $this->_oConfig = $oConfig;
+            }
         }
 
         return $this;
     }
 
     /**
-     * Run the watch-loop
+     * Check, if the config was updated
      *
-     * @return Testy_Watch
+     * @return int | false
      */
-    public function loop() {
-        $iTime = $this->_iTimestamp;
-        $this->_iTimestamp = time();
+    protected function _check() {
+        $iMtime = filemtime($this->_sFile);
+        $this->_bUpdate = false;
+        if ($this->_iMtime !== $iMtime) {
+            $this->_iMtime = $iMtime;
+            $this->_bUpdate = true;
+            return $this->_iMtime;
+        }
 
-        $oParallel = new Testy_Util_Parallel($this->_aStack);
-        $oParallel->run(array(
-            'check' => array(
-                $iTime
-            ),
-            'run'
-        ));
+        return false;
+    }
 
-        unset($oParallel);
+    /**
+     * Was the config updated?
+     *
+     * @return boolean
+     */
+    public function wasUpdated() {
+        return $this->_bUpdate;
+    }
 
-        return $this;
+    /**
+     * Return the config
+     *
+     * @return stdClass
+     */
+    public function get() {
+        return $this->_read()->_oConfig;
     }
 }
