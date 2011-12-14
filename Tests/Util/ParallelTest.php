@@ -15,7 +15,7 @@ class Testy_Util_ParallelTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Util_Parallel
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -27,7 +27,7 @@ class Testy_Util_ParallelTest extends PHPUnit_Framework_TestCase {
             $this->getMock(self::TEST_MOCK)
         );
 
-        $this->object = new Testy_Util_Parallel($aStack);
+        $this->_object = new Testy_Util_Parallel($aStack);
     }
 
     /**
@@ -41,7 +41,7 @@ class Testy_Util_ParallelTest extends PHPUnit_Framework_TestCase {
      * Set the number of threads
      */
     public function testThreads() {
-        $this->assertInstanceOf('Testy_Util_Parallel', $this->object->threads(2));
+        $this->assertInstanceOf('Testy_Util_Parallel', $this->_object->threads(2));
     }
 
     /**
@@ -50,7 +50,7 @@ class Testy_Util_ParallelTest extends PHPUnit_Framework_TestCase {
      * @depends testThreads
      */
     public function testRun() {
-        $this->assertInstanceOf('Testy_Util_Parallel', $this->object->run(array(
+        $this->assertInstanceOf('Testy_Util_Parallel', $this->_object->run(array(
             'getName'
         )));
     }
@@ -61,7 +61,7 @@ class Testy_Util_ParallelTest extends PHPUnit_Framework_TestCase {
      * @depends testRun
      */
     public function testGet() {
-        $aStack = $this->object->get();
+        $aStack = $this->_object->get();
         $this->assertInternalType('array', $aStack);
         $this->assertEquals(2, count($aStack));
         foreach ($aStack as $oProject) {

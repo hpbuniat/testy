@@ -9,14 +9,14 @@ class Testy_WatchTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Watch
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Testy_Watch();
+        $this->_object = new Testy_Watch();
     }
 
     /**
@@ -30,13 +30,13 @@ class Testy_WatchTest extends PHPUnit_Framework_TestCase {
      * Test simple add call
      */
     public function testAdd() {
-        $this->assertInstanceOf('Testy_Watch', $this->object->add($this->getMock('Testy_Project')));
+        $this->assertInstanceOf('Testy_Watch', $this->_object->add($this->getMock('Testy_Project')));
     }
 
     /**
      * Test the loop-call
      */
     public function testLoop() {
-        $this->assertInstanceOf('Testy_Watch', $this->object->loop());
+        $this->assertInstanceOf('Testy_Watch', $this->_object->loop());
     }
 }

@@ -84,7 +84,14 @@ class Testy_Config {
      *
      * @var string
      */
-    const CONFIG_ERROR = 'Error while reading the configuration!';
+    const ERROR = 'Error while reading the configuration!';
+
+    /**
+     * Info, if the config has been refreshed
+     *
+     * @var string
+     */
+    const REFRESH = 'The configuration has been refreshed!';
 
     /**
      * Create the builder
@@ -96,7 +103,7 @@ class Testy_Config {
             $this->_sFile = $sFile;
         }
         else {
-            throw new Testy_Exception(self::CONFIG_ERROR);
+            throw new Testy_Exception(Testy_Config::ERROR);
         }
     }
 
@@ -109,10 +116,13 @@ class Testy_Config {
         if ($this->_check() !== false) {
             $oConfig = json_decode(file_get_contents($this->_sFile));
             if (($this->_oConfig instanceof stdClass) !== true and empty($oConfig) === true) {
-                throw new Testy_Exception(self::CONFIG_ERROR);
+                throw new Testy_Exception(Testy_Config::ERROR);
             }
             else {
                 $this->_oConfig = $oConfig;
+                if (defined('VERBOSE') === true and VERBOSE === true) {
+                    Testy_TextUI_Output::info(Testy_Config::REFRESH);
+                }
             }
         }
 

@@ -8,14 +8,14 @@ class Testy_Notifier_StdoutTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Notifier_Stdout
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Testy_Notifier_Stdout();
+        $this->_object = new Testy_Notifier_Stdout();
     }
 
     /**
@@ -30,6 +30,6 @@ class Testy_Notifier_StdoutTest extends PHPUnit_Framework_TestCase {
      */
     public function testNotify() {
         $this->expectOutputRegex('/Test/');
-        $this->assertInstanceOf('Testy_AbstractNotifier', $this->object->notify($this->getMock('Testy_Project'), Testy_AbstractNotifier::SUCCESS, 'Test'));
+        $this->assertInstanceOf('Testy_AbstractNotifier', $this->_object->notify($this->getMock('Testy_Project'), Testy_AbstractNotifier::SUCCESS, 'Test'));
     }
 }

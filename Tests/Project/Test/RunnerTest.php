@@ -14,20 +14,26 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Project_Test_Runner
      */
-    protected $object;
+    protected $_object;
 
     /**
      * @var Testy_Project
      */
-    protected $oProject;
+    protected $_oProject;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->oProject = new Testy_Project(self::PROJECT_NAME);
-        $this->object = new Testy_Project_Test_Runner($this->oProject, array(
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
+        $oConfig->path = '/tmp';
+        $oConfig->find = '*';
+
+        $this->_oProject = new Testy_Project(self::PROJECT_NAME);
+        $this->_oProject->config($oConfig);
+        $this->_object = new Testy_Project_Test_Runner($this->_oProject, array(
             __FILE__
         ), '.');
     }
@@ -43,20 +49,35 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
      * Test setting repeat
      */
     public function testRepeat() {
-        $this->assertInstanceOf('Testy_Project_Test_Runner', $this->object->repeat());
+        $this->assertInstanceOf('Testy_Project_Test_Runner', $this->_object->repeat());
     }
 
     /**
      * Test running the runnter
      */
     public function testRun() {
-        $this->assertInstanceOf('Testy_Project_Test_Runner', $this->object->run());
+        $this->assertInstanceOf('Testy_Project_Test_Runner', $this->_object->run());
+        $this->assertEquals(1, $this->_object->getCommands());
     }
 
     /**
      * Test getting the result
      */
     public function testGet() {
-        $this->assertEquals('', $this->object->get());
+        $this->assertEquals('', $this->_object->get());
+    }
+
+    /**
+     * Test multiple files
+     */
+    public function testMultiple() {
+        $aFiles = array(
+            __FILE__,
+            __DIR__ . DIRECTORY_SEPARATOR . 'TestException.php'
+        );
+        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, '.');
+
+        $oRunner->run();
+        $this->assertEquals(count($aFiles), $oRunner->getCommands());
     }
 }

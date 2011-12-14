@@ -8,14 +8,14 @@ class Testy_ConfigTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Config
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Testy_Config('testy.json.dist');
+        $this->_object = new Testy_Config('testy.json.dist');
     }
 
     /**
@@ -29,7 +29,7 @@ class Testy_ConfigTest extends PHPUnit_Framework_TestCase {
      * Test config-creation
      */
     public function testGet() {
-        $oConfig = $this->object->get();
+        $oConfig = $this->_object->get();
         $this->assertInstanceOf('stdClass', $oConfig);
     }
 
@@ -37,11 +37,11 @@ class Testy_ConfigTest extends PHPUnit_Framework_TestCase {
      * Test the update-check
      */
     public function testWasUpdated() {
-        $this->object->get();
-        $this->assertTrue($this->object->wasUpdated());
+        $this->_object->get();
+        $this->assertTrue($this->_object->wasUpdated());
 
-        $this->object->get();
-        $this->assertFalse($this->object->wasUpdated());
+        $this->_object->get();
+        $this->assertFalse($this->_object->wasUpdated());
     }
 
     /**
@@ -53,7 +53,7 @@ class Testy_ConfigTest extends PHPUnit_Framework_TestCase {
             $this->fail('An exception should be raised, when creating a config-builder without file');
         }
         catch(Exception $e) {
-            $this->assertEquals($e->getMessage(), Testy_Config::CONFIG_ERROR);
+            $this->assertEquals($e->getMessage(), Testy_Config::ERROR);
         }
     }
 }

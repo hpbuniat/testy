@@ -15,14 +15,14 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Project
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new Testy_Project(self::PROJECT_NAME);
+        $this->_object = new Testy_Project(self::PROJECT_NAME);
     }
 
     /**
@@ -36,14 +36,14 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * Test adding a notifier
      */
     public function testAddNotifier() {
-        $this->assertInstanceOf('Testy_Project', $this->object->addNotifier($this->getMock('Testy_Notifier_Stdout')));
+        $this->assertInstanceOf('Testy_Project', $this->_object->addNotifier($this->getMock('Testy_Notifier_Stdout')));
     }
 
     /**
      * Test getting the project-name
      */
     public function testGetName() {
-        $this->assertEquals(self::PROJECT_NAME, $this->object->getName());
+        $this->assertEquals(self::PROJECT_NAME, $this->_object->getName());
     }
 
     /**
@@ -51,7 +51,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      */
     public function testConfig() {
         try {
-            $this->object->config(new stdClass());
+            $this->_object->config(new stdClass());
             $this->fail('An exception should be raised, when setting the test-config');
         }
         catch(Exception $e) {
@@ -70,9 +70,9 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
         $oConfig->path = '/tmp';
         $oConfig->find = '*';
 
-        $this->assertInstanceOf('Testy_Project', $this->object->config($oConfig));
-        $this->assertInstanceOf('Testy_Project', $this->object->check(0));
-        $this->assertNotEmpty($this->object->getFiles());
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($oConfig));
+        $this->assertInstanceOf('Testy_Project', $this->_object->check(0));
+        $this->assertNotEmpty($this->_object->getFiles());
     }
 
     /**
@@ -81,7 +81,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testCheck
      */
     public function testRun() {
-        $this->assertInstanceOf('Testy_Project', $this->object->run());
+        $this->assertInstanceOf('Testy_Project', $this->_object->run());
     }
 
     /**
@@ -90,10 +90,10 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testRun
      */
     public function testGetProjectHash() {
-        $this->assertEquals(32, strlen($this->object->getProjectHash()));
+        $this->assertEquals(32, strlen($this->_object->getProjectHash()));
 
         $oObject = new Testy_Project('test');
-        $this->assertNotEquals($oObject->getProjectHash(), $this->object->getProjectHash());
+        $this->assertNotEquals($oObject->getProjectHash(), $this->_object->getProjectHash());
     }
 
     /**
@@ -102,7 +102,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testRun
      */
     public function testIsEnabled() {
-        $this->assertTrue($this->object->isEnabled());
+        $this->assertTrue($this->_object->isEnabled());
 
         $oConfig = new stdClass();
         $oConfig->test = 'cd /tmp';
@@ -119,6 +119,6 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testAddNotifier
      */
     public function testNotify() {
-        $this->assertInstanceOf('Testy_Project', $this->object->notify('', ''));
+        $this->assertInstanceOf('Testy_Project', $this->_object->notify('', ''));
     }
 }

@@ -8,7 +8,7 @@ class Testy_Notifier_FileTest extends PHPUnit_Framework_TestCase {
     /**
      * @var Testy_Notifier_File
      */
-    protected $object;
+    protected $_object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -18,7 +18,7 @@ class Testy_Notifier_FileTest extends PHPUnit_Framework_TestCase {
         $oConfig = new stdClass();
         $oConfig->path = '/tmp';
 
-        $this->object = new Testy_Notifier_File($oConfig);
+        $this->_object = new Testy_Notifier_File($oConfig);
     }
 
     /**
@@ -33,6 +33,6 @@ class Testy_Notifier_FileTest extends PHPUnit_Framework_TestCase {
      * Test simple notify call
      */
     public function testNotify() {
-        $this->assertInstanceOf('Testy_AbstractNotifier', $this->object->notify($this->getMock('Testy_Project'), Testy_AbstractNotifier::SUCCESS, ''));
+        $this->assertInstanceOf('Testy_AbstractNotifier', $this->_object->notify($this->getMock('Testy_Project'), Testy_AbstractNotifier::SUCCESS, ''));
     }
 }

@@ -94,11 +94,39 @@ class Testy_Project_Test_Runner {
     protected $_sReturn = '';
 
     /**
+     * The number of commands executed
+     *
+     * @var int
+     */
+    protected $_iCommands = 0;
+
+    /**
      * Placeholder for a specific file (triggers Executor_One)
      *
      * @var string
      */
     const FILE_PLACEHOLDER = '$file';
+
+    /**
+     * Placeholder for a the current time
+     *
+     * @var string
+     */
+    const TIME_PLACEHOLDER = '$time';
+
+    /**
+     * Placeholder for the files mtime
+     *
+     * @var string
+     */
+    const MTIME_PLACEHOLDER = '$mtime';
+
+    /**
+     * Placeholder for the project name
+     *
+     * @var string
+     */
+    const PROJECT_PLACEHOLDER = '$project';
 
     /**
      * Create the runnter
@@ -132,7 +160,7 @@ class Testy_Project_Test_Runner {
         $bSingle = $this->_executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
             $this->_execute($this->_getCommand($bSingle));
-            if ($bSingle !== true) {
+            if ($bSingle === true) {
                 break;
             }
         }
@@ -150,12 +178,19 @@ class Testy_Project_Test_Runner {
     }
 
     /**
+     * Get the number of executed commands
+     */
+    public function getCommands() {
+        return $this->_iCommands;
+    }
+
+    /**
      * Should the command be executed for each file
      *
      * @return boolean
      */
     protected function _executeSingle() {
-        return (strpos($this->_sCommand, self::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
+        return (strpos($this->_sCommand, Testy_Project_Test_Runner::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
     }
 
     /**
@@ -165,10 +200,10 @@ class Testy_Project_Test_Runner {
      */
     protected function _getCommand($bSingle = false) {
         $aReplace = array(
-            self::FILE_PLACEHOLDER => (($bSingle !== true) ? '' : $this->_sFile),
-            '$time' => time(),
-            '$mtime' => filemtime($this->_sFile),
-            '$project' => $this->_oProject->getName()
+            Testy_Project_Test_Runner::FILE_PLACEHOLDER => (($bSingle !== true) ? '' : $this->_sFile),
+            Testy_Project_Test_Runner::TIME_PLACEHOLDER => time(),
+            Testy_Project_Test_Runner::MTIME_PLACEHOLDER => filemtime($this->_sFile),
+            Testy_Project_Test_Runner::PROJECT_PLACEHOLDER => $this->_oProject->getName()
         );
         return str_replace(array_keys($aReplace), array_values($aReplace), $this->_sCommand);
     }
@@ -181,6 +216,8 @@ class Testy_Project_Test_Runner {
      * @return boolean
      */
     protected function _execute($sCommand) {
+        $this->_iCommands++;
+
         $oCommand = new Testy_Util_Command();
         $this->_sReturn = $oCommand->execute($sCommand)->get();
         if ($oCommand->isSuccess() !== true) {
