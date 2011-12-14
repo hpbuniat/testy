@@ -97,6 +97,25 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Test getting a config-hash
+     *
+     * @depends testRun
+     */
+    public function testIsEnabled() {
+        $this->assertTrue($this->object->isEnabled());
+
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp';
+        $oConfig->path = '/tmp';
+        $oConfig->find = '*';
+        $oConfig->enabled = false;
+
+        $oObject = new Testy_Project('test');
+        $oObject->config($oConfig);
+        $this->assertFalse($oObject->isEnabled());
+    }
+
+    /**
      * @depends testAddNotifier
      */
     public function testNotify() {

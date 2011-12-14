@@ -94,6 +94,13 @@ class Testy_Project {
     private $_aFiles = array();
 
     /**
+     * Indicate, if the project is enabled
+     *
+     * @var boolean
+     */
+    private $_bEnabled = true;
+
+    /**
      * Info-Text, if there are lint errors
      *
      * @var string
@@ -171,6 +178,10 @@ class Testy_Project {
             $this->_sPattern = $oConfig->find;
         }
 
+        if (isset($oConfig->enabled) === true) {
+            $this->_bEnabled = ($oConfig->enabled == true);
+        }
+
         $this->_oConfig = $oConfig;
         return $this;
     }
@@ -182,6 +193,15 @@ class Testy_Project {
      */
     public function getProjectHash() {
         return md5($this->_sName . serialize($this->_oConfig) . serialize(array_keys($this->_aNotifiers)));
+    }
+
+    /**
+     * Check, if the project is enabled
+     *
+     * @return boolean
+     */
+    public function isEnabled() {
+        return $this->_bEnabled;
     }
 
     /**
