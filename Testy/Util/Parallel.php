@@ -94,6 +94,13 @@ class Testy_Util_Parallel {
     const THREADS = 4;
 
     /**
+     * Cache-Dir
+     *
+     * @var string
+     */
+    const DIR = '/tmp/Testy/';
+
+    /**
      * Init the Wrapper
      *
      * @param array $aStack
@@ -107,8 +114,8 @@ class Testy_Util_Parallel {
             $this->_aStack[] = $oObject;
         }
 
-        if (is_dir(Testy_Util_Cacheable::DIR) !== true) {
-            mkdir(Testy_Util_Cacheable::DIR, 0744, true);
+        if (is_dir(Testy_Util_Parallel::DIR) !== true) {
+            mkdir(Testy_Util_Parallel::DIR, 0744, true);
         }
 
         $this->_iThreads = self::THREADS;
@@ -147,7 +154,7 @@ class Testy_Util_Parallel {
      * @return ParallelTests
      */
     public function run(array $aMethods = array()) {
-        $this->_rShared = shm_attach(ftok(tempnam(Testy_Util_Cacheable::DIR . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+        $this->_rShared = shm_attach(ftok(tempnam(Testy_Util_Parallel::DIR . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
         foreach (array_keys($this->_aStack) as $iStack) {
             $iChildren = count($this->_aProc);
             if ($iChildren < $this->_iThreads or $this->_iThreads === 0) {

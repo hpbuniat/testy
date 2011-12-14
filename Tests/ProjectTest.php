@@ -69,6 +69,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
         $oConfig->test = 'cd /tmp';
         $oConfig->path = '/tmp';
         $oConfig->find = '*';
+        $oConfig->syntax = 'echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
 
         $this->assertInstanceOf('Testy_Project', $this->_object->config($oConfig));
         $this->assertInstanceOf('Testy_Project', $this->_object->check(0));
@@ -81,6 +82,9 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testCheck
      */
     public function testRun() {
+        $this->assertInstanceOf('Testy_Project', $this->_object->setFiles(array(
+            __FILE__
+        )));
         $this->assertInstanceOf('Testy_Project', $this->_object->run());
     }
 

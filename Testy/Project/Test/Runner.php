@@ -190,7 +190,7 @@ class Testy_Project_Test_Runner {
      * @return boolean
      */
     protected function _executeSingle() {
-        return (strpos($this->_sCommand, Testy_Project_Test_Runner::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
+        return (strpos($this->_sCommand, self::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
     }
 
     /**
@@ -200,10 +200,10 @@ class Testy_Project_Test_Runner {
      */
     protected function _getCommand($bSingle = false) {
         $aReplace = array(
-            Testy_Project_Test_Runner::FILE_PLACEHOLDER => (($bSingle !== true) ? '' : $this->_sFile),
-            Testy_Project_Test_Runner::TIME_PLACEHOLDER => time(),
-            Testy_Project_Test_Runner::MTIME_PLACEHOLDER => filemtime($this->_sFile),
-            Testy_Project_Test_Runner::PROJECT_PLACEHOLDER => $this->_oProject->getName()
+            self::FILE_PLACEHOLDER => (($bSingle !== true) ? '' : $this->_sFile),
+            self::TIME_PLACEHOLDER => time(),
+            self::MTIME_PLACEHOLDER => filemtime($this->_sFile),
+            self::PROJECT_PLACEHOLDER => $this->_oProject->getName()
         );
         return str_replace(array_keys($aReplace), array_values($aReplace), $this->_sCommand);
     }

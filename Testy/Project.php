@@ -171,7 +171,7 @@ class Testy_Project {
     public function config(stdClass $oConfig) {
         $this->_sPath = (isset($oConfig->path) === true) ? $oConfig->path : '.';
         if (isset($oConfig->test) === false) {
-            throw new Testy_Exception(sprintf(Testy_Project::MISSING_TEST_COMMAND, $this->getName()));
+            throw new Testy_Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
         }
 
         if (isset($oConfig->find) === true) {
@@ -236,14 +236,14 @@ class Testy_Project {
             return $this;
         }
 
-        $this->notify(Testy_AbstractNotifier::INFO, Testy_Project::INFO);
+        $this->notify(Testy_AbstractNotifier::INFO, self::INFO);
         if (empty($this->_oConfig->syntax) === true or $this->_lint() === true) {
             $bRepeat = (empty($this->_oConfig->repeat) !== true and $this->_oConfig->repeat == true);
             $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->test);
             try {
                 $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
                 if ($bRepeat === true) {
-                    $this->notify(Testy_AbstractNotifier::INFO, Testy_Project::REPEAT);
+                    $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
                     $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
                 }
             }
@@ -270,7 +270,10 @@ class Testy_Project {
         }
         catch (Testy_Project_Test_Exception $oException) {
             $bReturn = false;
-            $this->notify(Testy_AbstractNotifier::FAILED, Testy_Project::LINT_ERROR);
+            $this->notify(Testy_AbstractNotifier::FAILED, self::LINT_ERROR);
+            if (defined('VERBOSE') === true and VERBOSE === true) {
+                Testy_TextUI_Output::info($oException->getMessage());
+            }
         }
 
         unset($oRunner);
@@ -301,4 +304,15 @@ class Testy_Project {
     public function getFiles() {
         return $this->_aFiles;
     }
+
+    /**
+     * Set modified files
+     *
+     * @return Testy_Project
+     */
+    public function setFiles(array $aFiles = array()) {
+        $this->_aFiles = $aFiles;
+        return $this;
+    }
+
 }
