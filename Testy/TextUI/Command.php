@@ -130,6 +130,7 @@ class Testy_TextUI_Command {
     public function run(array $argv) {
         try {
             $this->_handleArguments($argv);
+            $oWatch = new Testy_Watch();
             while (true) {
                 $oConfig = $this->_oConfig->get();
                 if ($this->_oConfig->wasUpdated() === true) {
@@ -141,7 +142,6 @@ class Testy_TextUI_Command {
                         }
                     }
 
-                    $oWatch = new Testy_Watch();
                     foreach ($oConfig->projects as $sProject => $oProjectConfig) {
                         $oWatch->add(Testy_Project_Builder::build($sProject, $oProjectConfig, $aNotifiers));
                     }
