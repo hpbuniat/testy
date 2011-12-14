@@ -82,9 +82,14 @@ class Testy_Watch {
      */
     public function add(Testy_Project $oProject) {
         $sName = $oProject->getName();
-        if ($oProject->isEnabled() === true and (empty($this->_aStack[$sName]) === true or ($oProject->getProjectHash() !== $this->_aStack[$sName]->getProjectHash()))) {
-            $this->_aStack[$sName] = $oProject;
-            $oProject->notify(Testy_AbstractNotifier::INFO, Testy_Project_Builder::INFO);
+        if (empty($this->_aStack[$sName]) === true or ($oProject->getProjectHash() !== $this->_aStack[$sName]->getProjectHash())) {
+            if ($oProject->isEnabled() === true) {
+                $this->_aStack[$sName] = $oProject;
+                $oProject->notify(Testy_AbstractNotifier::INFO, Testy_Project_Builder::INFO);
+            }
+            elseif (empty($this->_aStack[$sName]) !== true) {
+                unset($this->_aStack[$sName]);
+            }
         }
 
         return $this;
