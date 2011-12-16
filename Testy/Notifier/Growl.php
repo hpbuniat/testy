@@ -70,7 +70,7 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
      *
      * @var int
      */
-    const MESSAGE_MAX_LENGTH = 512;
+    protected $_iMessageLength = 512;
 
     /**
      * (non-PHPdoc)
@@ -95,10 +95,7 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
         }
 
         $sText = $sStatus . PHP_EOL . PHP_EOL . trim($sText);
-        if (strlen($sText) > self::MESSAGE_MAX_LENGTH) {
-            $sText = substr($sText, 0, self::MESSAGE_MAX_LENGTH);
-        }
-
+        $sText = $this->formatMessage($sText);
         $this->_sMessage = pack('c2n5', 1, 1, 0, strlen($sStatus), strlen($sProject), strlen($sText), strlen($sName))
                          . $sStatus . $sProject . $sText . $sName;
         $this->_send();

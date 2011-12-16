@@ -73,6 +73,13 @@ abstract class Testy_AbstractNotifier {
     const INFO = 'Info';
 
     /**
+     * Maximum message length
+     *
+     * @var int
+     */
+    protected $_iMessageLength = 0;
+
+    /**
      * The notifiers configuration
      *
      * @var stdClass
@@ -86,6 +93,21 @@ abstract class Testy_AbstractNotifier {
      */
     public function __construct(stdClass $oConfig = null) {
         $this->_oConfig = $oConfig;
+    }
+
+    /**
+     * Format the message
+     *
+     * @param  string $sText
+     *
+     * @return strings
+     */
+    public function formatMessage($sText) {
+        if ($this->_iMessageLength > 0 and strlen($sText) > $this->_iMessageLength) {
+            $sText = substr($sText, 0, $this->_iMessageLength);
+        }
+
+        return preg_replace('!\\033\[\d{1,2}(;\d{1,2})?m!i', '', $sText);
     }
 
     /**
