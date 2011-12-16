@@ -31,14 +31,26 @@ class Testy_TextUI_CommandTest extends PHPUnit_Framework_TestCase {
      *
      */
     public function testHandleArguments() {
-        $this->_object->handleArguments();
+        try {
+            $this->_object->handleArguments();
+        }
+        catch (Exception $e) {
+            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
+        }
+
         $this->assertEmpty($this->_object->getArguments());
 
         $aArguments = array(
             '--verbose'
         );
-        $this->assertTrue($this->_object->handleArguments($aArguments));
-        $aResult = $this->_object->getArguments();
+        try {
+            $this->_object->handleArguments($aArguments);
+        }
+        catch (Exception $e) {
+            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
+        }
+
+        $this->_object->getArguments();
         $this->assertTrue(defined('VERBOSE'));
     }
 
