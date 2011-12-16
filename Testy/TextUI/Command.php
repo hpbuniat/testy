@@ -80,6 +80,20 @@ class Testy_TextUI_Command {
     const NAME = 'testy';
 
     /**
+     * The version
+     *
+     * @var string
+     */
+    const VERSION = 'testy - a continuous test-runner (Version: @package_version@)';
+
+    /**
+     * Usage info
+     *
+     * @var string
+     */
+    const USAGE = 'Usage: testy.php [--config=testy.json]';
+
+    /**
      * Default-Arguments
      *
      * @var array
@@ -129,7 +143,10 @@ class Testy_TextUI_Command {
      */
     public function run(array $argv) {
         try {
-            $this->_handleArguments($argv);
+            if ($this->handleArguments($argv) === false) {
+                exit(self::SUCCESS_EXIT);
+            }
+
             $oWatch = new Testy_Watch();
             while (true) {
                 $oConfig = $this->_oConfig->get();
@@ -161,13 +178,11 @@ class Testy_TextUI_Command {
     /**
      * Handle passed arguments
      *
-     * @param array $aParameters
+     * @param  array $aParameters
      *
-     * @return Testy_TextUI_Command
+     * @return boolean
      */
-    protected function _handleArguments(array $aParameters) {
-        self::printVersionString();
-
+    public function handleArguments(array $aParameters = array()) {
         $oConsole = new Console_Getopt();
         try {
             $this->_aOptions = @$oConsole->getopt($aParameters, '', array_keys($this->_aLongOptions));
@@ -192,10 +207,12 @@ class Testy_TextUI_Command {
                         break;
 
                     case '--help':
-                    case '--version':
                         self::showHelp();
-                        exit(self::SUCCESS_EXIT);
-                        break;
+                        return false;
+
+                    case '--version':
+                        self::printVersionString();
+                        return false;
                 }
             }
         }
@@ -208,7 +225,16 @@ class Testy_TextUI_Command {
         }
 
         $this->_oConfig = new Testy_Config($sConfig);
-        return $this;
+        return true;
+    }
+
+    /**
+     * Get the parsed arguments
+     *
+     * @return array
+     */
+    public function getArguments() {
+        return $this->_aArguments;
     }
 
     /**
@@ -217,8 +243,7 @@ class Testy_TextUI_Command {
      * @return void
      */
     public static function showHelp() {
-        self::printVersionString();
-        Testy_TextUI_Output::info('Usage: Testy [--config=testy.json]');
+        Testy_TextUI_Output::info(self::USAGE);
     }
 
     /**
@@ -227,6 +252,6 @@ class Testy_TextUI_Command {
      * @return void
      */
     public static function printVersionString() {
-        Testy_TextUI_Output::info('Testy - a continuous test-runner (Version: @package_version@)');
+        Testy_TextUI_Output::info(self::VERSION);
     }
 }

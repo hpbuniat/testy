@@ -154,7 +154,7 @@ class Testy_Util_Parallel {
      * @return ParallelTests
      */
     public function run(array $aMethods = array()) {
-        $this->_rShared = shm_attach(ftok(tempnam(Testy_Util_Parallel::DIR . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+        $this->_rShared = shm_attach(ftok(tempnam(self::DIR . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
         foreach (array_keys($this->_aStack) as $iStack) {
             $iChildren = count($this->_aProc);
             if ($iChildren < $this->_iThreads or $this->_iThreads === 0) {
