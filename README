@@ -6,21 +6,33 @@ The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/packag
 
 ## Project-Configuration ##
 
+Example without File -> Test-Mapping
 "testy": {
-    "path": "~/workspace/Testy", 
-    "test": "cd ~/workspace/testy; phpunit",
+    "path": "~/workspace/testy",
+    "test": "phpunit", 
+    "test_dir": "~/workspace/testy;",
+    "syntax": "php -l $file",
+    "find": "*.php"
+}
+
+"testy": {
+    "path": "~/workspace/testy",
+    "test": "phpunit $file {Testy|Test} {.php|Test.php}", 
+    "test_dir": "~/workspace/testy;",
     "syntax": "php -l $file",
     "find": "*.php"
 }
 
 ## Options ##
-path:   The path that is checked for changed files
-find:   The find-pattern that is used to find changed files
-syntax: Command to do a syntax-check (skips testing on error)
-test:   The test to execute on changed files
-    support for placeholders:
-        $file       Each file that changed
-        $project    The projects name
-        $time       The current timestmap
-        $mtime      The modification's timestamp
-repeat: Repeat the test-command without the specific file (which is replaced by '') 
+path:     The path that is checked for changed files
+find:     The find-pattern that is used to find changed files
+syntax:   Command to do a syntax-check (skips testing on error)
+test_dir: The dir to cd in, before executing the test-command
+test:     The test to execute on changed files
+          support for placeholders:
+          $file       Each file that changed
+          $project    The projects name
+          $time       The current timestmap
+          $mtime      The modification's timestamp
+
+repeat: Repeat the test-command without the specific file (which is replaced by ''), default: true 

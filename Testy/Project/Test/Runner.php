@@ -240,6 +240,7 @@ class Testy_Project_Test_Runner {
             }
         }
 
+        $sCommand = trim(preg_replace('!{.*?}!i', '', $sCommand));
         if (empty($this->_sChangeDir) !== true) {
             $sCommand = 'cd ' . $this->_sChangeDir . '; ' . $sCommand;
         }
