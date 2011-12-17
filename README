@@ -6,7 +6,7 @@ The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/packag
 
 ## Project-Configuration ##
 
-Example without File -> Test-Mapping
+Example w/o File -> Test-Mapping
 "testy": {
     "path": "~/workspace/testy",
     "test": "phpunit", 
@@ -15,9 +15,10 @@ Example without File -> Test-Mapping
     "find": "*.php"
 }
 
+Example with File -> Test-Mapping
 "testy": {
     "path": "~/workspace/testy",
-    "test": "phpunit $file {Testy|Test} {.php|Test.php}", 
+    "test": "phpunit $file {Testy|Tests} {.php|Test.php}", 
     "test_dir": "~/workspace/testy;",
     "syntax": "php -l $file",
     "find": "*.php"
@@ -36,3 +37,7 @@ test:     The test to execute on changed files
           $mtime      The modification's timestamp
 
 repeat: Repeat the test-command without the specific file (which is replaced by ''), default: true 
+
+File -> Test-Mapping
+Use the {Search|Replace}-Pattern, as often as needed, to map the Source-File to it's test.
+If all Search-Patterns are found within the changed-files path, it is assumed that this is a test file.
