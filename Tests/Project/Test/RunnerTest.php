@@ -80,7 +80,7 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
     public function testMultiple() {
         $aFiles = array(
             __FILE__,
-            __DIR__ . DIRECTORY_SEPARATOR . 'TestException.php'
+            __DIR__ . DIRECTORY_SEPARATOR . 'ExceptionTest.php'
         );
         $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, $this->_oConfig);
         $oRunner->run();
@@ -94,7 +94,7 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
     public function testCommandAsString() {
         $aFiles = array(
             __FILE__,
-            __DIR__ . DIRECTORY_SEPARATOR . 'TestException.php'
+            __DIR__ . DIRECTORY_SEPARATOR . 'ExceptionTest.php'
         );
         $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, 'echo $file');
         $oRunner->run();

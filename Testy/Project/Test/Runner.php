@@ -230,14 +230,9 @@ class Testy_Project_Test_Runner {
     protected function _getCommand($bSingle = false) {
         $sCommand = $this->_sCommand;
         if ($bSingle === true) {
-            try {
-                $oTestMapper = new Testy_Project_File_Mapper($sCommand, $this->_sFile);
-                $sCommand = $oTestMapper->map()->get();
-                unset($oTestMapper);
-            }
-            catch (Testy_Exception $e) {
-                throw new Testy_Project_Test_Exception($e->getMessage());
-            }
+            $oTestMapper = new Testy_Project_File_Mapper($sCommand, $this->_sFile);
+            $sCommand = $oTestMapper->map()->get();
+            unset($oTestMapper);
         }
 
         $sCommand = trim(preg_replace('!{.*?}!i', '', $sCommand));
@@ -260,6 +255,8 @@ class Testy_Project_Test_Runner {
      * @param  string $sCommand
      *
      * @return boolean
+     *
+     * @throws Testy_Project_Test_Exception If the test fails
      */
     protected function _execute($sCommand) {
         $this->_iCommands++;

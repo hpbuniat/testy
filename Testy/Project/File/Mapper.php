@@ -91,8 +91,8 @@ class Testy_Project_File_Mapper {
      *
      * @param  string $sCommand The command to execute
      * @param  string $sFile The file
-     * @param  string $sDir The Source-Path
-     * @param  string $sTestDir The test-dir
+     *
+     * @throws Testy_Exception If the file is not accessable
      */
     public function __construct($sCommand = null, $sFile = null) {
         if (empty($sFile) !== true and file_exists($sFile) === true) {
@@ -108,6 +108,8 @@ class Testy_Project_File_Mapper {
      * Map the path
      *
      * @return Testy_Project_File_Mapper
+     *
+     * @throws Testy_Project_Test_Exception If no matching test is found
      */
     public function map() {
         $this->_sTestFile = $this->_sFile;
@@ -133,7 +135,7 @@ class Testy_Project_File_Mapper {
                 $this->_sTestFile = $sFile;
             }
             else {
-                throw new Testy_Project_Test_Exception(sprintf(self::MISSING_TEST, $this->_sFile));
+                throw new Testy_Project_File_Exception(sprintf(self::MISSING_TEST, $this->_sFile));
             }
         }
 
@@ -153,7 +155,7 @@ class Testy_Project_File_Mapper {
     }
 
     /**
-     * Return the config
+     * Return the command
      *
      * @return stdClass
      */

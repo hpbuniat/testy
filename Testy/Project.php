@@ -241,7 +241,13 @@ class Testy_Project {
             $bRepeat = (empty($this->_oConfig->repeat) === true or $this->_oConfig->repeat != true);
             $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig);
             try {
-                $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
+                try {
+                    $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
+                }
+                catch (Testy_Project_File_Exception $oException) {
+                    $this->notify(Testy_AbstractNotifier::INFO, $oException->getMessage());
+                }
+
                 if ($bRepeat === true) {
                     $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
                     $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());

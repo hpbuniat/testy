@@ -31,7 +31,7 @@ class Testy_Project_File_MapperTest extends PHPUnit_Framework_TestCase {
             $oMapper->map();
             $this->fail('an exception should have been thrown');
         }
-        catch (Testy_Exception $e) {
+        catch (Testy_Project_File_Exception $e) {
             $this->assertEquals(sprintf(Testy_Project_File_Mapper::MISSING_TEST, $sFile), $e->getMessage());
         }
     }
