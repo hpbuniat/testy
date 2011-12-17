@@ -52,11 +52,25 @@
 class Testy_Project_Test_Runner {
 
     /**
-     * The command to execute
+     * The Test-Command
      *
      * @var string
      */
     protected $_sCommand = '';
+
+    /**
+     * The Test-Command, which was executed at last (testing purpose)
+     *
+     * @var string
+     */
+    protected $_sLastCommand = '';
+
+    /**
+     * The change-dir command, which is execuded before the test
+     *
+     * @var string
+     */
+    protected $_sChangeDir = '';
 
     /**
      * All modified files
@@ -133,12 +147,18 @@ class Testy_Project_Test_Runner {
      *
      * @param  Testy_Project $oProject
      * @param  array $aFiles
-     * @param  string $sCommand
+     * @param  mixed $mConfig Project-Config or Test-Command
      */
-    public function __construct(Testy_Project $oProject, array $aFiles, $sCommand) {
+    public function __construct(Testy_Project $oProject, array $aFiles, $mConfig) {
         $this->_oProject = $oProject;
         $this->_aFiles = $aFiles;
-        $this->_sCommand = $sCommand;
+
+        $this->_sChangeDir = '';
+        if ($mConfig instanceof stdClass and isset($mConfig->test_dir) === true) {
+            $this->_sChangeDir = $mConfig->test_dir;
+        }
+
+        $this->_sCommand = ($mConfig instanceof stdClass) ? $mConfig->test : $mConfig;
     }
 
     /**
@@ -160,7 +180,7 @@ class Testy_Project_Test_Runner {
         $bSingle = $this->_executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
             $this->_execute($this->_getCommand($bSingle));
-            if ($bSingle === true) {
+            if ($bSingle !== true) {
                 break;
             }
         }
@@ -185,6 +205,15 @@ class Testy_Project_Test_Runner {
     }
 
     /**
+     * Get the last executed command
+     *
+     * @return string
+     */
+    public function getLastCommand() {
+        return $this->_sLastCommand;
+    }
+
+    /**
      * Should the command be executed for each file
      *
      * @return boolean
@@ -199,13 +228,29 @@ class Testy_Project_Test_Runner {
      * @return string
      */
     protected function _getCommand($bSingle = false) {
+        $sCommand = $this->_sCommand;
+        if ($bSingle === true) {
+            try {
+                $oTestMapper = new Testy_Project_File_Mapper($sCommand, $this->_sFile);
+                $sCommand = $oTestMapper->map()->get();
+                unset($oTestMapper);
+            }
+            catch (Testy_Exception $e) {
+                throw new Testy_Project_Test_Exception($e->getMessage());
+            }
+        }
+
+        if (empty($this->_sChangeDir) !== true) {
+            $sCommand = 'cd ' . $this->_sChangeDir . '; ' . $sCommand;
+        }
+
         $aReplace = array(
-            self::FILE_PLACEHOLDER => (($bSingle !== true) ? '' : $this->_sFile),
+            self::FILE_PLACEHOLDER => '',
             self::TIME_PLACEHOLDER => time(),
             self::MTIME_PLACEHOLDER => filemtime($this->_sFile),
             self::PROJECT_PLACEHOLDER => $this->_oProject->getName()
         );
-        return str_replace(array_keys($aReplace), array_values($aReplace), $this->_sCommand);
+        return str_replace(array_keys($aReplace), array_values($aReplace), $sCommand);
     }
 
     /**
@@ -217,9 +262,10 @@ class Testy_Project_Test_Runner {
      */
     protected function _execute($sCommand) {
         $this->_iCommands++;
+        $this->_sLastCommand = $sCommand;
 
         $oCommand = new Testy_Util_Command();
-        $this->_sReturn = $oCommand->execute($sCommand)->get();
+        $this->_sReturn = $oCommand->execute($this->_sLastCommand)->get();
         if ($oCommand->isSuccess() !== true) {
             throw new Testy_Project_Test_Exception($this->_sReturn);
         }

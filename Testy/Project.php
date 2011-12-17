@@ -238,8 +238,8 @@ class Testy_Project {
 
         $this->notify(Testy_AbstractNotifier::INFO, self::INFO);
         if (empty($this->_oConfig->syntax) === true or $this->_lint() === true) {
-            $bRepeat = (empty($this->_oConfig->repeat) !== true and $this->_oConfig->repeat == true);
-            $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->test);
+            $bRepeat = (empty($this->_oConfig->repeat) === true or $this->_oConfig->repeat != true);
+            $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig);
             try {
                 $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->run()->get());
                 if ($bRepeat === true) {

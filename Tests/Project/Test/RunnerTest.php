@@ -22,20 +22,27 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
     protected $_oProject;
 
     /**
+     * The config
+     *
+     * @var stdClass
+     */
+    protected $_oConfig;
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $oConfig = new stdClass();
-        $oConfig->test = 'cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
-        $oConfig->path = '/tmp';
-        $oConfig->find = '*';
+        $this->_oConfig = new stdClass();
+        $this->_oConfig->test = 'cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
+        $this->_oConfig->path = '/tmp';
+        $this->_oConfig->find = '*';
 
         $this->_oProject = new Testy_Project(self::PROJECT_NAME);
-        $this->_oProject->config($oConfig);
+        $this->_oProject->config($this->_oConfig);
         $this->_object = new Testy_Project_Test_Runner($this->_oProject, array(
             __FILE__
-        ), '.');
+        ), $this->_oConfig);
     }
 
     /**
@@ -75,9 +82,24 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
             __FILE__,
             __DIR__ . DIRECTORY_SEPARATOR . 'TestException.php'
         );
-        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, '.');
-
+        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, $this->_oConfig);
         $oRunner->run();
+
         $this->assertEquals(count($aFiles), $oRunner->getCommands());
+    }
+
+    /**
+     * Test passing the command as string
+     */
+    public function testCommandAsString() {
+        $aFiles = array(
+            __FILE__,
+            __DIR__ . DIRECTORY_SEPARATOR . 'TestException.php'
+        );
+        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, 'echo $file');
+        $oRunner->run();
+
+        $this->assertEquals(count($aFiles), $oRunner->getCommands());
+        $this->assertEquals('echo ' . end($aFiles), $oRunner->getLastCommand());
     }
 }
