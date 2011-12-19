@@ -115,7 +115,7 @@ class Testy_Project_File_Mapper {
         $this->_sTestFile = $this->_sFile;
 
         $aMatch = array();
-        if (preg_match_all('!{([\.\w]+)\|([\.\w]+)}!i', $this->_sCommand, $aMatch) !== 0) {
+        if (preg_match_all(' !{([\.\w-/]+)\|([\.\w-/]+)}!i', $this->_sCommand, $aMatch) !== 0) {
             $aSearch = $aReplace = array();
             if (empty($aMatch[1]) !== true and empty($aMatch[2]) !== true) {
                 $aSearch = $aMatch[1];
