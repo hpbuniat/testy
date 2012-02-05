@@ -30,7 +30,10 @@ class Testy_WatchTest extends PHPUnit_Framework_TestCase {
      * Test simple add call
      */
     public function testAdd() {
-        $this->assertInstanceOf('Testy_Watch', $this->_object->add($this->getMock('Testy_Project')));
+        $oMock = $this->getMockBuilder('Testy_Project')->getMock();
+        $oMock->expects($this->any())->method('isEnabled')->will($this->returnValue(true));
+
+        $this->assertInstanceOf('Testy_Watch', $this->_object->add($oMock));
     }
 
     /**

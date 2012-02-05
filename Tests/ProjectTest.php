@@ -18,11 +18,23 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     protected $_object;
 
     /**
+     * The test-config
+     *
+     * @var stdClass
+     */
+    protected $_oConfig;
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
         $this->_object = new Testy_Project(self::PROJECT_NAME);
+        $this->_oConfig = new stdClass();
+        $this->_oConfig->test = 'cd /tmp';
+        $this->_oConfig->path = '/tmp';
+        $this->_oConfig->find = '*';
+        $this->_oConfig->syntax = 'echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
     }
 
     /**
@@ -65,13 +77,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testAddNotifier
      */
     public function testCheck() {
-        $oConfig = new stdClass();
-        $oConfig->test = 'cd /tmp';
-        $oConfig->path = '/tmp';
-        $oConfig->find = '*';
-        $oConfig->syntax = 'echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
-
-        $this->assertInstanceOf('Testy_Project', $this->_object->config($oConfig));
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
         $this->assertInstanceOf('Testy_Project', $this->_object->check(0));
         $this->assertNotEmpty($this->_object->getFiles());
     }
@@ -82,6 +88,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testCheck
      */
     public function testRun() {
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
         $this->assertInstanceOf('Testy_Project', $this->_object->setFiles(array(
             __FILE__
         )));

@@ -13,16 +13,16 @@ class Testy_Project_File_MapperTest extends PHPUnit_Framework_TestCase {
             new Testy_Project_File_Mapper();
             $this->fail('an exception should have been thrown');
         }
-        catch (Testy_Exception $e) {
-            $this->assertEquals(Testy_Project_File_Mapper::SOURCE_ERROR, $e->getMessage());
+        catch (Testy_Exception $oSourceException) {
+            $this->assertEquals(Testy_Project_File_Mapper::SOURCE_ERROR, $oSourceException->getMessage());
         }
 
         try {
             new Testy_Project_File_Mapper('cd ..', '/this/file/does/not/exist');
             $this->fail('an exception should have been thrown');
         }
-        catch (Testy_Exception $e) {
-            $this->assertEquals(Testy_Project_File_Mapper::SOURCE_ERROR, $e->getMessage());
+        catch (Testy_Exception $oNotFoundException) {
+            $this->assertEquals(Testy_Project_File_Mapper::SOURCE_ERROR, $oNotFoundException->getMessage());
         }
 
         try {
@@ -31,8 +31,8 @@ class Testy_Project_File_MapperTest extends PHPUnit_Framework_TestCase {
             $oMapper->map();
             $this->fail('an exception should have been thrown');
         }
-        catch (Testy_Project_File_Exception $e) {
-            $this->assertEquals(sprintf(Testy_Project_File_Mapper::MISSING_TEST, $sFile), $e->getMessage());
+        catch (Testy_Project_File_Exception $oMissinTestException) {
+            $this->assertEquals(sprintf(Testy_Project_File_Mapper::MISSING_TEST, $sFile), $oMissinTestException->getMessage());
         }
     }
 

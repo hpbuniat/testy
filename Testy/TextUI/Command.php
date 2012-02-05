@@ -140,6 +140,8 @@ class Testy_TextUI_Command {
      * @param  array $argv
      *
      * @return Testy_TextUI_Command
+     *
+     * @codeCoverageIgnore
      */
     public function run(array $argv) {
         try {

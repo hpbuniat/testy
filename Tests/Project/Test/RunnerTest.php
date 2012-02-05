@@ -102,4 +102,17 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(count($aFiles), $oRunner->getCommands());
         $this->assertEquals('echo ' . end($aFiles), $oRunner->getLastCommand());
     }
+
+    /**
+     * Test the result, if a command does not succeed
+     *
+     * @expectedException Testy_Project_Test_Exception
+     */
+    public function testCommandFailure() {
+        $aFiles = array(
+            __FILE__,
+        );
+        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, './' . uniqid());
+        $oRunner->run();
+    }
 }
