@@ -128,6 +128,8 @@ class Testy_TextUI_Command {
 
     /**
      * Main entry
+     *
+     * @codeCoverageIgnore
      */
     public static function main() {
         $command = new Testy_TextUI_Command();
