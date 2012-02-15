@@ -2,7 +2,7 @@
 /**
  * testy
  *
- * Copyright (c) 2011, Hans-Peter Buniat <hpbuniat@googlemail.com>.
+ * Copyright (c)2011-2012, Hans-Peter Buniat <hpbuniat@googlemail.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -44,7 +44,7 @@
  * Base class for 'userland'-exections
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
