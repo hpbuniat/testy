@@ -105,28 +105,28 @@ class Testy_Project {
      *
      * @var string
      */
-    const LINT_ERROR = 'linting the changed files failed, suppressing test';
+    const LINT_ERROR = 'Linting the changed files failed!';
 
     /**
      * Info-Text, if the test-command is repeated
      *
      * @var string
      */
-    const REPEAT = 'repeating test-command without a specific file';
+    const REPEAT = 'Repeating test-command without a specific file';
 
     /**
      * Info-Text, if there is no test command given
      *
      * @var stirng
      */
-    const MISSING_TEST_COMMAND = 'test-command missing for project %s';
+    const MISSING_TEST_COMMAND = 'Test-command missing for project %s';
 
     /**
      * Notify about detected modifications
      *
      * @var string
      */
-    const INFO = 'Modifications detected, running tests ...';
+    const INFO = 'Modifications detected (%s)';
 
     /**
      * Init the project
@@ -236,7 +236,7 @@ class Testy_Project {
             return $this;
         }
 
-        $this->notify(Testy_AbstractNotifier::INFO, self::INFO);
+        $this->notify(Testy_AbstractNotifier::INFO, sprintf(self::INFO, implode(', ', $this->_aFiles)));
         if (empty($this->_oConfig->syntax) === true or $this->_lint() === true) {
             $bRepeat = (empty($this->_oConfig->repeat) === true or $this->_oConfig->repeat != true);
             $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig);
@@ -248,7 +248,7 @@ class Testy_Project {
                     $this->notify(Testy_AbstractNotifier::INFO, $oException->getMessage());
                 }
 
-                if ($bRepeat === true) {
+                if ($bRepeat === true and $oRunner->executeSingle() === true) {
                     $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
                     $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
                 }

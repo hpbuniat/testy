@@ -177,7 +177,7 @@ class Testy_Project_Test_Runner {
      * @return Testy_Project_Test_Runner
      */
     public function run() {
-        $bSingle = $this->_executeSingle();
+        $bSingle = $this->executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
             $this->_execute($this->_getCommand($bSingle));
             if ($bSingle !== true) {
@@ -218,7 +218,7 @@ class Testy_Project_Test_Runner {
      *
      * @return boolean
      */
-    protected function _executeSingle() {
+    public function executeSingle() {
         return (strpos($this->_sCommand, self::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
     }
 

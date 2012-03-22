@@ -49,6 +49,8 @@
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
+
+// @codeCoverageIgnoreStart
 class Testy_Notifier_Growl extends Testy_AbstractNotifier {
 
     /**
@@ -70,7 +72,7 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
      *
      * @var int
      */
-    protected $_iMessageLength = 512;
+    protected $_iMessageLength = 256;
 
     /**
      * (non-PHPdoc)
@@ -84,8 +86,8 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
             $this->_sMessage = pack('c2nc2', 1, 0, strlen($sName), 3, 3)
                              . $sName
                              . pack('n', strlen(self::SUCCESS)) . self::SUCCESS
-                             . pack('n', strlen(self::FAILED)) . self::FAILED
                              . pack('n', strlen(self::INFO)) . self::INFO
+                             . pack('n', strlen(self::FAILED)) . self::FAILED
                              . pack('c', 0)
                              . pack('c', 1)
                              . pack('c', 2);
@@ -96,6 +98,7 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
 
         $sText = $sStatus . PHP_EOL . PHP_EOL . trim($sText);
         $sText = $this->formatMessage($sText);
+
         $this->_sMessage = pack('c2n5', 1, 1, 0, strlen($sStatus), strlen($sProject), strlen($sText), strlen($sName))
                          . $sStatus . $sProject . $sText . $sName;
         $this->_send();
@@ -120,3 +123,4 @@ class Testy_Notifier_Growl extends Testy_AbstractNotifier {
         return $this;
     }
 }
+// @codeCoverageIgnoreEnd
