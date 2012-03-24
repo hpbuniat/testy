@@ -9,6 +9,7 @@ Project-Configuration
 -----
 
 Example w/o File -> Test-Mapping
+<pre>
 "testy": {
     "path": "~/workspace/testy",
     "test": "phpunit", 
@@ -16,8 +17,10 @@ Example w/o File -> Test-Mapping
     "syntax": "php -l $file",
     "find": "*.php"
 }
+</pre>
 
 Example with File -> Test-Mapping
+<pre>
 "testy": {
     "path": "~/workspace/testy",
     "test": "phpunit $file {Testy|Tests} {.php|Test.php}", 
@@ -25,6 +28,7 @@ Example with File -> Test-Mapping
     "syntax": "php -l $file",
     "find": "*.php"
 }
+</pre>
 
 Options
 -----
