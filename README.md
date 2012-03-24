@@ -1,10 +1,12 @@
 Testy - a continuous test-runner
+=====
 
-Testy is a one-purpose tool - run tests and notify!
+**Testy** is a one-purpose tool - run tests and notify!
 
 The dbus-notifier is based on the php dbus-extension (http://pecl.php.net/package/DBus) by Derick Rethans
 
-## Project-Configuration ##
+Project-Configuration
+-----
 
 Example w/o File -> Test-Mapping
 "testy": {
@@ -24,7 +26,9 @@ Example with File -> Test-Mapping
     "find": "*.php"
 }
 
-## Options ##
+Options
+-----
+
 path:     The path that is checked for changed files
 find:     The find-pattern that is used to find changed files
 syntax:   Command to do a syntax-check (skips testing on error)
