@@ -2,7 +2,7 @@
 /**
  * testy
  *
- * Copyright (c) 2011, Hans-Peter Buniat <hpbuniat@googlemail.com>.
+ * Copyright (c)2011-2012, Hans-Peter Buniat <hpbuniat@googlemail.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -44,7 +44,7 @@
  * Base-Command class to handle arguments and start processing
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
@@ -168,7 +168,8 @@ class Testy_TextUI_Command {
                     }
                 }
 
-                $oWatch->loop();
+                $sTransport = isset($oConfig->setup->parallel) ? $oConfig->setup->parallel : Testy_Util_Parallel_Transport_Builder::TRANSPORT_DEFAULT;
+                $oWatch->loop(Testy_Util_Parallel_Transport_Builder::build($sTransport), $oConfig->setup->sleep);
                 sleep($oConfig->setup->sleep);
             }
         }

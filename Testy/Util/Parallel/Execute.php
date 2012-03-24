@@ -2,7 +2,7 @@
 /**
  * testy
  *
- * Copyright (c) 2011, Hans-Peter Buniat <hpbuniat@googlemail.com>.
+ * Copyright (c)2011-2012, Hans-Peter Buniat <hpbuniat@googlemail.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -44,12 +44,12 @@
  * Wrapper to execute specific methods to instances in parallel
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_Parallel {
+class Testy_Util_Parallel_Execute {
 
     /**
      * The Test-Cases
@@ -66,13 +66,6 @@ class Testy_Util_Parallel {
     private $_aProc = array();
 
     /**
-     * Shared-Memory
-     *
-     * @var ressource
-     */
-    private $_rShared = null;
-
-    /**
      * Number of parallel threads
      *
      * @var int
@@ -85,6 +78,13 @@ class Testy_Util_Parallel {
      * @var array
      */
     private $_iStart = null;
+
+    /**
+     * The Transport to store data
+     *
+     * @var Testy_Util_Parallel_TransportInterface
+     */
+    private $_oTransport = null;
 
     /**
      * Number of threads (default)
@@ -105,7 +105,7 @@ class Testy_Util_Parallel {
      *
      * @param array $aStack
      */
-    public function __construct(array $aStack = array()) {
+    public function __construct(array $aStack = array(), Testy_Util_Parallel_TransportInterface $oTransport) {
         $this->_iStart = microtime(true);
         $this->_aStack = array();
 
@@ -114,11 +114,8 @@ class Testy_Util_Parallel {
             $this->_aStack[] = $oObject;
         }
 
-        if (is_dir(Testy_Util_Parallel::DIR) !== true) {
-            mkdir(Testy_Util_Parallel::DIR, 0744, true);
-        }
-
-        $this->_iThreads = self::THREADS;
+        $this->_oTransport = $oTransport;
+        $this->threads();
     }
 
     /**
@@ -135,9 +132,9 @@ class Testy_Util_Parallel {
      *
      * @param  int $iThreads Number of parallel Threads
      *
-     * @return ParallelTests
+     * @return Testy_Util_Parallel_Execute
      */
-    public function threads($iThreads) {
+    public function threads($iThreads = 0) {
         $this->_iThreads = (int) $iThreads;
         if ($this->_iThreads === 0) {
             $this->_iThreads = self::THREADS;
@@ -147,14 +144,25 @@ class Testy_Util_Parallel {
     }
 
     /**
+     * Get the thread-count
+     *
+     * @return int
+     */
+    public function getThreads() {
+        return $this->_iThreads;
+    }
+
+    /**
      * Run
      *
      * @param  array $aMethods Methods to execute
      *
-     * @return ParallelTests
+     * @return Testy_Util_Parallel_Execute
      */
     public function run(array $aMethods = array()) {
-        $this->_rShared = shm_attach(ftok(tempnam(self::DIR . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+        $this->_oTransport->setup(array(
+            'dir' => self::DIR
+        ));
         foreach (array_keys($this->_aStack) as $iStack) {
             $iChildren = count($this->_aProc);
             if ($iChildren < $this->_iThreads or $this->_iThreads === 0) {
@@ -173,9 +181,8 @@ class Testy_Util_Parallel {
         }
 
         $this->_wait(true)->_read();
+        $this->_oTransport->free();
 
-        shm_remove($this->_rShared);
-        shm_detach($this->_rShared);
         return $this;
     }
 
@@ -185,7 +192,7 @@ class Testy_Util_Parallel {
      * @param  array $aMethods Methods to execute
      * @param  int $iStack Stack-Index
      *
-     * @return ParallelTests
+     * @return Testy_Util_Parallel_Execute
      */
     private function _execute($aMethods, $iStack) {
         foreach ($aMethods as $mKey => $mValue) {
@@ -202,7 +209,7 @@ class Testy_Util_Parallel {
             ), $aParams);
         }
 
-        shm_put_var($this->_rShared, $iStack, gzcompress(serialize($this->_aStack[$iStack])));
+        $this->_oTransport->write($iStack, gzcompress(serialize($this->_aStack[$iStack])));
         posix_kill(getmypid(), 9);
         return $this;
     }
@@ -212,7 +219,7 @@ class Testy_Util_Parallel {
      *
      * @param  boolean $bAll
      *
-     * @return ParallelTests
+     * @return Testy_Util_Parallel_Execute
      */
     private function _wait($bAll = false) {
         $iChildren = count($this->_aProc);
@@ -241,13 +248,13 @@ class Testy_Util_Parallel {
     /**
      * Read the test-results from shared-memory
      *
-     * @return ParallelTests
+     * @return Testy_Util_Parallel_Execute
      */
     private function _read() {
         foreach (array_keys($this->_aStack) as $iStack) {
-            if (shm_has_var($this->_rShared, $iStack) === true) {
-                $this->_aStack[$iStack] = unserialize(gzuncompress(shm_get_var($this->_rShared, $iStack)));
-                shm_remove_var($this->_rShared, $iStack);
+            $mResult = $this->_oTransport->read($iStack);
+            if (empty($mResult) !== true) {
+                $this->_aStack[$iStack] = unserialize(gzuncompress($mResult));
             }
         }
 

@@ -2,7 +2,7 @@
 /**
  * testy
  *
- * Copyright (c) 2011, Hans-Peter Buniat <hpbuniat@googlemail.com>.
+ * Copyright (c)2011-2012, Hans-Peter Buniat <hpbuniat@googlemail.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -44,7 +44,7 @@
  * Run the test-command
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
@@ -177,7 +177,7 @@ class Testy_Project_Test_Runner {
      * @return Testy_Project_Test_Runner
      */
     public function run() {
-        $bSingle = $this->_executeSingle();
+        $bSingle = $this->executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
             $this->_execute($this->_getCommand($bSingle));
             if ($bSingle !== true) {
@@ -218,7 +218,7 @@ class Testy_Project_Test_Runner {
      *
      * @return boolean
      */
-    protected function _executeSingle() {
+    public function executeSingle() {
         return (strpos($this->_sCommand, self::FILE_PLACEHOLDER) !== false and $this->_bRepeat !== true);
     }
 

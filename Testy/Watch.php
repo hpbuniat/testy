@@ -2,7 +2,7 @@
 /**
  * testy
  *
- * Copyright (c) 2011, Hans-Peter Buniat <hpbuniat@googlemail.com>.
+ * Copyright (c)2011-2012, Hans-Peter Buniat <hpbuniat@googlemail.com>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  *
  * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
@@ -44,7 +44,7 @@
  * Run the watch loop
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
- * @copyright 2011 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
@@ -98,13 +98,18 @@ class Testy_Watch {
     /**
      * Run the watch-loop
      *
+     * @param  Testy_Util_Parallel_TransportInterface $oTransport
+     *
      * @return Testy_Watch
      */
-    public function loop() {
+    public function loop(Testy_Util_Parallel_TransportInterface $oTransport, $iSleep) {
         $iTime = $this->_iTimestamp;
         $this->_iTimestamp = time();
+        if ($iTime === $this->_iTimestamp) {
+            $this->_iTimestamp += $iSleep;
+        }
 
-        $oParallel = new Testy_Util_Parallel($this->_aStack);
+        $oParallel = new Testy_Util_Parallel_Execute($this->_aStack, $oTransport);
         $oParallel->run(array(
             'check' => array(
                 $iTime

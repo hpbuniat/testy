@@ -33,8 +33,21 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        $this->_setup();
+    }
+
+    /**
+     * Setup the object
+     *
+     * @param  string $sCommand
+     *
+     * @return void
+     */
+    protected function _setup($sCommand = '') {
+        $sCommand = (empty($sCommand) ? ('cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER . ' > /dev/null') : $sCommand);
+
         $this->_oConfig = new stdClass();
-        $this->_oConfig->test = 'cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
+        $this->_oConfig->test = $sCommand;
         $this->_oConfig->path = '/tmp';
         $this->_oConfig->find = '*';
 
@@ -50,6 +63,17 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
+    }
+
+    /**
+     * Test, if a single-execution is detected
+     */
+    public function testExecuteSingle() {
+        $this->assertTrue($this->_object->executeSingle());
+
+        $sCommand = 'cd /tmp;';
+        $this->_setup($sCommand);
+        $this->assertFalse($this->_object->executeSingle());
     }
 
     /**

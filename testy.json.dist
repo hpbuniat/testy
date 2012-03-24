@@ -21,6 +21,7 @@
                 "path": "~/workspace/testy/"
             }
         },
+        "parallel": "SharedMemory",
         "sleep": 5
     },
     "projects": {

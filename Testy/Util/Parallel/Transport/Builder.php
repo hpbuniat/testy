@@ -34,68 +34,78 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * Test Project-Builder
+ * Builder for Transports
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
- * @link https://github.com/hpbuniat/testy
+ * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
+class Testy_Util_Parallel_Transport_Builder {
 
     /**
-     * An empty dummy config
-     *
-     * @var stdClass
-     */
-    protected $_oConfig;
-
-    /**
-     * Test-Project Name
+     * Class for file-transport
      *
      * @var string
      */
-    const PROJECT_NAME = 'foobar';
+    const TRANSPORT_FILE = 'Testy_Util_Parallel_Transport_File';
 
     /**
-     * Setup
+     * Class for shared-memory-transport
+     *
+     * @var string
      */
-    public function setUp() {
-        $this->_oConfig = new stdClass;
-        $this->_oConfig->test = 'phpunit';
-    }
+    const TRANSPORT_SHARED = 'Testy_Util_Parallel_Transport_SharedMemory';
 
     /**
-     * Test successful project creation
+     * Class for memcache-transport
+     *
+     * @var string
      */
-    public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
-            $this->getMock('Testy_Notifier_Stdout')
-        ));
-        $this->assertInstanceOf('Testy_Project', $oProject);
-        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
-        unset($oProject);
-    }
+    const TRANSPORT_MEMCACHE = 'Testy_Util_Parallel_Transport_Memcache';
 
     /**
-     * Test failure
+     * The default transport
+     *
+     * @var string
      */
-    public function testBuildFailed() {
-        $oConfig = new stdClass;
-        try {
-            Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail('an exception should have been thrown, if no test-command ist configured');
+    const TRANSPORT_DEFAULT = 'SharedMemory';
+
+    /**
+     * Build a transport
+     *
+     * @param unknown_type $sType
+     *
+     * @return Testy_Util_Parallel_TransportInterface
+     */
+    public static function build($sTransport) {
+        $sBuild = strtolower($sTransport);
+        switch ($sBuild) {
+            case 'file':
+                $sBuild = self::TRANSPORT_FILE;
+                break;
+
+            case 'memcache':
+                $sBuild = self::TRANSPORT_MEMCACHE;
+                break;
+
+            case 'shared':
+            case 'sharedmemory':
+                $sBuild = self::TRANSPORT_SHARED;
+                break;
+
+            default:
+                throw new Testy_Util_Parallel_Transport_Exception(Testy_Util_Parallel_Transport_Exception::UNKNOWN_TRANSPORT);
         }
-        catch (Exception $e) {
-            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
-        }
+
+        return new $sBuild();
     }
 }

@@ -34,68 +34,90 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * Test Project-Builder
+ * Parallel-Transport for File
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
- * @link https://github.com/hpbuniat/testy
+ * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
+class Testy_Util_Parallel_Transport_File implements Testy_Util_Parallel_TransportInterface {
 
     /**
-     * An empty dummy config
-     *
-     * @var stdClass
-     */
-    protected $_oConfig;
-
-    /**
-     * Test-Project Name
+     * The directory to use
      *
      * @var string
      */
-    const PROJECT_NAME = 'foobar';
+    private $_sDir = '/dev/null';
 
     /**
-     * Setup
+     * The file-prefix
+     *
+     * @var string
      */
-    public function setUp() {
-        $this->_oConfig = new stdClass;
-        $this->_oConfig->test = 'phpunit';
+    const PREFIX = '_parallel_';
+
+    /**
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::setup()
+     */
+    public function setup(array $aOptions = array()) {
+        if (empty($aOptions['dir']) !== true and is_dir($aOptions['dir']) === true) {
+            $sUniqueId = uniqid(self::PREFIX);
+            $this->_sDir = $aOptions['dir'] . $sUniqueId;
+            mkdir($this->_sDir, 0744, true);
+
+            return $this;
+        }
+
+        throw new Testy_Util_Parallel_Transport_Exception(Testy_Util_Parallel_Transport_Exception::SETUP_ERROR);
     }
 
     /**
-     * Test successful project creation
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::read()
      */
-    public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
-            $this->getMock('Testy_Notifier_Stdout')
-        ));
-        $this->assertInstanceOf('Testy_Project', $oProject);
-        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
-        unset($oProject);
+    public function read($sId) {
+        $mReturn = false;
+        $sFile = $this->_sDir . DIRECTORY_SEPARATOR . self::PREFIX . $sId;
+        if (file_exists($sFile)) {
+            $mReturn = file_get_contents($sFile);
+        }
+
+        return $mReturn;
     }
 
     /**
-     * Test failure
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::write()
      */
-    public function testBuildFailed() {
-        $oConfig = new stdClass;
-        try {
-            Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail('an exception should have been thrown, if no test-command ist configured');
+    public function write($sId, $mData) {
+        $sFile = $this->_sDir . DIRECTORY_SEPARATOR . self::PREFIX . $sId;
+        file_put_contents($sFile, $mData);
+
+        return $this;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::free()
+     */
+    public function free() {
+        $oIter = new DirectoryIterator($this->_sDir);
+        foreach ($oIter as $oFile) {
+            if ($oFile->isFile() === true) {
+                unlink($oFile->getPathname());
+            }
         }
-        catch (Exception $e) {
-            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
-        }
+
+        return $this;
     }
 }

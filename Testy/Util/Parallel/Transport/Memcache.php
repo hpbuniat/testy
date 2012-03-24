@@ -34,68 +34,83 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * Test Project-Builder
+ * Parallel-Transport for Memcache
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
- * @link https://github.com/hpbuniat/testy
+ * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
+class Testy_Util_Parallel_Transport_Memcache implements Testy_Util_Parallel_TransportInterface {
 
     /**
-     * An empty dummy config
+     * The memcache-connection
      *
-     * @var stdClass
+     * @var Memcache
      */
-    protected $_oConfig;
+    private $_oMemcache = null;
 
     /**
-     * Test-Project Name
+     * Memcache-Options
      *
-     * @var string
+     * @var array
      */
-    const PROJECT_NAME = 'foobar';
+    private $_aOptions = array(
+        'server' => 'localhost',
+        'port' => 11211
+    );
 
     /**
-     * Setup
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::setup()
      */
-    public function setUp() {
-        $this->_oConfig = new stdClass;
-        $this->_oConfig->test = 'phpunit';
+    public function setup(array $aOptions = array()) {
+        $this->_oMemcache = new Memcache;
+        foreach ($this->_aOptions as $sOption => $mValue) {
+            if (empty($aOptions[$sOption]) !== true) {
+                $this->_aOptions[$sOption] = $aOptions[$sOption];
+            }
+        }
+
+
+        $bConnect = $this->_oMemcache->connect($this->_aOptions['server'], $this->_aOptions['port']);
+        if ($bConnect !== true) {
+            throw new Testy_Util_Parallel_Transport_Exception(Testy_Util_Parallel_Transport_Exception::SETUP_ERROR);
+        }
+
+        return $this;
     }
 
     /**
-     * Test successful project creation
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::read()
      */
-    public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
-            $this->getMock('Testy_Notifier_Stdout')
-        ));
-        $this->assertInstanceOf('Testy_Project', $oProject);
-        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
-        unset($oProject);
+    public function read($sId) {
+        return $this->_oMemcache->get($sId);
     }
 
     /**
-     * Test failure
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::write()
      */
-    public function testBuildFailed() {
-        $oConfig = new stdClass;
-        try {
-            Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail('an exception should have been thrown, if no test-command ist configured');
-        }
-        catch (Exception $e) {
-            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
-        }
+    public function write($sId, $mData) {
+        $this->_oMemcache->set($sId, $mData);
+        return $this;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::free()
+     */
+    public function free() {
+        return $this;
     }
 }

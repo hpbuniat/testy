@@ -34,68 +34,57 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * Test Project-Builder
+ * All the Parallel-Transports should implement this interface
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
- * @link https://github.com/hpbuniat/testy
+ * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
+interface Testy_Util_Parallel_TransportInterface {
 
     /**
-     * An empty dummy config
+     * Setup the transport
      *
-     * @var stdClass
-     */
-    protected $_oConfig;
-
-    /**
-     * Test-Project Name
+     * @param  array $aOptions
      *
-     * @var string
+     * @return Testy_Util_Parallel_TransportInterface
+     *
+     * @throws Testy_Util_Parallel_Transport_Exception
      */
-    const PROJECT_NAME = 'foobar';
+    public function setup(array $aOptions = array());
 
     /**
-     * Setup
+     * Read a value from the transport
+     *
+     * @param  string $sId
+     *
+     * @return mixed
      */
-    public function setUp() {
-        $this->_oConfig = new stdClass;
-        $this->_oConfig->test = 'phpunit';
-    }
+    public function read($sId);
+
+     /**
+     * Setup the transport
+     *
+     * @param  string $sId
+     * @param  mixed $mData
+     *
+     * @return Testy_Util_Parallel_TransportInterface
+     */
+    public function write($sId, $mData);
 
     /**
-     * Test successful project creation
+     * Release the transport & cleanup
+     *
+     * @return Testy_Util_Parallel_TransportInterface
      */
-    public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
-            $this->getMock('Testy_Notifier_Stdout')
-        ));
-        $this->assertInstanceOf('Testy_Project', $oProject);
-        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
-        unset($oProject);
-    }
-
-    /**
-     * Test failure
-     */
-    public function testBuildFailed() {
-        $oConfig = new stdClass;
-        try {
-            Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail('an exception should have been thrown, if no test-command ist configured');
-        }
-        catch (Exception $e) {
-            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
-        }
-    }
+    public function free();
 }

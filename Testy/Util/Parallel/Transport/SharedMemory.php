@@ -34,68 +34,79 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
 /**
- * Test Project-Builder
+ * Parallel-Transport for shared-memory
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2012 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @version Release: @package_version@
- * @link https://github.com/hpbuniat/testy
+ * @link https://github.com/hpbuniat/Testy
  */
-class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
+class Testy_Util_Parallel_Transport_SharedMemory implements Testy_Util_Parallel_TransportInterface {
 
     /**
-     * An empty dummy config
+     * Shared-Memory
      *
-     * @var stdClass
+     * @var ressource
      */
-    protected $_oConfig;
+    private $_rShared = null;
 
     /**
-     * Test-Project Name
-     *
-     * @var string
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::setup()
      */
-    const PROJECT_NAME = 'foobar';
+    public function setup(array $aOptions = array()) {
+        if (empty($aOptions['dir']) !== true) {
+            if (is_dir($aOptions['dir']) !== true) {
+                mkdir($aOptions['dir'], 0744, true);
+            }
 
-    /**
-     * Setup
-     */
-    public function setUp() {
-        $this->_oConfig = new stdClass;
-        $this->_oConfig->test = 'phpunit';
+            if (is_dir($aOptions['dir']) === true) {
+                $this->_rShared = shm_attach(ftok(tempnam($aOptions['dir'] . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+                return $this;
+            }
+        }
+
+        throw new Testy_Util_Parallel_Transport_Exception(Testy_Util_Parallel_Transport_Exception::SETUP_ERROR);
     }
 
     /**
-     * Test successful project creation
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::read()
      */
-    public function testBuildSuccess() {
-        $oProject = Testy_Project_Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
-            $this->getMock('Testy_Notifier_Stdout')
-        ));
-        $this->assertInstanceOf('Testy_Project', $oProject);
-        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
-        unset($oProject);
+    public function read($sId) {
+        $mReturn = false;
+        if (shm_has_var($this->_rShared, $sId) === true) {
+            $mReturn = shm_get_var($this->_rShared, $sId);
+            shm_remove_var($this->_rShared, $sId);
+        }
+
+        return $mReturn;
     }
 
     /**
-     * Test failure
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::write()
      */
-    public function testBuildFailed() {
-        $oConfig = new stdClass;
-        try {
-            Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
-            $this->fail('an exception should have been thrown, if no test-command ist configured');
-        }
-        catch (Exception $e) {
-            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
-        }
+    public function write($sId, $mData) {
+        shm_put_var($this->_rShared, $sId, $mData);
+        return $this;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Testy_Util_Parallel_TransportInterface::free()
+     */
+    public function free() {
+        shm_remove($this->_rShared);
+        shm_detach($this->_rShared);
+        return $this;
     }
 }

@@ -40,6 +40,7 @@ class Testy_WatchTest extends PHPUnit_Framework_TestCase {
      * Test the loop-call
      */
     public function testLoop() {
-        $this->assertInstanceOf('Testy_Watch', $this->_object->loop());
+        $oMock = $this->getMockBuilder('Testy_Util_Parallel_Transport_File')->getMock();
+        $this->assertInstanceOf('Testy_Watch', $this->_object->loop($oMock, 2));
     }
 }
