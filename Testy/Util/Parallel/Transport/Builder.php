@@ -82,9 +82,11 @@ class Testy_Util_Parallel_Transport_Builder {
     /**
      * Build a transport
      *
-     * @param unknown_type $sType
+     * @param  string $sType
      *
      * @return Testy_Util_Parallel_TransportInterface
+     *
+     * @throws Testy_Util_Parallel_Transport_Exception If a unknown transport is provided
      */
     public static function build($sTransport) {
         $sBuild = strtolower($sTransport);

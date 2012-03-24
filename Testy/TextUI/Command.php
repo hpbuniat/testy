@@ -191,35 +191,37 @@ class Testy_TextUI_Command {
         $oConsole = new Console_Getopt();
         try {
             $this->_aOptions = @$oConsole->getopt($aParameters, '', array_keys($this->_aLongOptions));
+            if ($this->_aOptions instanceof PEAR_Error) {
+                Testy_TextUI_Output::error($this->_aOptions->getMessage());
+            }
+
+            if (empty($this->_aOptions[0]) !== true) {
+                foreach ($this->_aOptions[0] as $option) {
+                    switch ($option[0]) {
+                        case '--verbose':
+                            define('VERBOSE', true);
+                            break;
+
+                        case '--config':
+                            $this->_aArguments['config'] = $option[1];
+                            break;
+
+                        case '--help':
+                            self::showHelp();
+                            return false;
+
+                        case '--version':
+                            self::printVersionString();
+                            return false;
+
+                        default:
+                            throw new RuntimeException('Unknown option');
+                    }
+                }
+            }
         }
         catch (RuntimeException $e) {
             Testy_TextUI_Output::info($e->getMessage());
-        }
-
-        if ($this->_aOptions instanceof PEAR_Error) {
-            Testy_TextUI_Output::error($this->_aOptions->getMessage());
-        }
-
-        if (empty($this->_aOptions[0]) !== true) {
-            foreach ($this->_aOptions[0] as $option) {
-                switch ($option[0]) {
-                    case '--verbose':
-                        define('VERBOSE', true);
-                        break;
-
-                    case '--config':
-                        $this->_aArguments['config'] = $option[1];
-                        break;
-
-                    case '--help':
-                        self::showHelp();
-                        return false;
-
-                    case '--version':
-                        self::printVersionString();
-                        return false;
-                }
-            }
         }
 
         unset($oConsole);

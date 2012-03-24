@@ -73,13 +73,12 @@ class Testy_Util_Parallel_Transport_Memcache implements Testy_Util_Parallel_Tran
      * @see Testy_Util_Parallel_TransportInterface::setup()
      */
     public function setup(array $aOptions = array()) {
-        $this->_oMemcache = new Memcache;
+        $this->_oMemcache = new Memcache();
         foreach ($this->_aOptions as $sOption => $mValue) {
             if (empty($aOptions[$sOption]) !== true) {
                 $this->_aOptions[$sOption] = $aOptions[$sOption];
             }
         }
-
 
         $bConnect = $this->_oMemcache->connect($this->_aOptions['server'], $this->_aOptions['port']);
         if ($bConnect !== true) {

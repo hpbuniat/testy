@@ -71,7 +71,7 @@ interface Testy_Util_Parallel_TransportInterface {
      */
     public function read($sId);
 
-     /**
+    /**
      * Setup the transport
      *
      * @param  string $sId
