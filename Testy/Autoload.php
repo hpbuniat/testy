@@ -40,6 +40,13 @@
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
+if (defined('TESTY_PATH') !== true) {
+    define('TESTY_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+    if (strpos('@php_bin@', '@php_bin') === 0) {
+        set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+    }
+}
+
 // lightweight autoloader
 function Testy_autoload($sClass) {
     $sFile = str_replace('_', DIRECTORY_SEPARATOR, $sClass) . '.php';

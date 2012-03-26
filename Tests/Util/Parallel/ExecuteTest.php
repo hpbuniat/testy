@@ -10,7 +10,7 @@ class Testy_Util_Parallel_ExecuteTest extends PHPUnit_Framework_TestCase {
      *
      * @var string
      */
-    const TEST_MOCK = 'Testy_Project';
+    const TEST_MOCK = 'Testy_Util_Parallel_Transport_File';
 
     /**
      * @var Testy_Util_Parallel_Execute
@@ -22,17 +22,18 @@ class Testy_Util_Parallel_ExecuteTest extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $aStack = array(
-            $this->getMock(self::TEST_MOCK),
-            $this->getMock(self::TEST_MOCK),
-            $this->getMock(self::TEST_MOCK),
-            $this->getMock(self::TEST_MOCK)
-        );
+        $aStack = array();
+        for ($i = 0; $i < 4; $i++) {
+            $oMock = $this->getMock(self::TEST_MOCK);
+            $oMock->expects($this->any())->method('free')->will($this->returnSelf());
+            $aStack[] = $oMock;
+        }
 
-        $oTransport = $this->getMock('Testy_Util_Parallel_Transport_File');
-        $oTransport->expects($this->any())
-                   ->method('get')
-                   ->will($this->returnValue(self::TEST_MOCK));
+        $oTransport = $this->getMock(self::TEST_MOCK);
+        $oTransport->expects($this->at(0))->method('read')->will($this->returnValue(false));
+        $oTransport->expects($this->any())->method('read')->will($this->returnValue(gzcompress(serialize($oTransport))));
+        $oTransport->expects($this->any())->method('write')->will($this->returnSelf());
+        $oTransport->expects($this->any())->method('free')->will($this->returnSelf());
 
         $this->_object = new Testy_Util_Parallel_Execute($aStack, $oTransport);
     }
@@ -45,37 +46,23 @@ class Testy_Util_Parallel_ExecuteTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Set the number of threads
+     * Test the complete workflow
      */
-    public function testThreads() {
+    public function testWorkflow() {
         $this->assertInstanceOf('Testy_Util_Parallel_Execute', $this->_object->threads());
         $this->assertEquals(Testy_Util_Parallel_Execute::THREADS, $this->_object->getThreads());
         $this->assertInstanceOf('Testy_Util_Parallel_Execute', $this->_object->threads(2));
         $this->assertEquals(2, $this->_object->getThreads());
-    }
 
-    /**
-     * Test running methods in parallel
-     *
-     * @depends testThreads
-     */
-    public function testRun() {
         $this->assertInstanceOf('Testy_Util_Parallel_Execute', $this->_object->run(array(
-            'getName'
+            'free'
         )));
-    }
 
-    /**
-     * Test getting the result
-     *
-     * @depends testRun
-     */
-    public function testGet() {
         $aStack = $this->_object->get();
         $this->assertInternalType('array', $aStack);
         $this->assertEquals(4, count($aStack));
-        foreach ($aStack as $oProject) {
-            $this->assertInstanceOf(self::TEST_MOCK, $oProject);
+        foreach ($aStack as $oItem) {
+            $this->assertInstanceOf(self::TEST_MOCK, $oItem);
         }
     }
 }

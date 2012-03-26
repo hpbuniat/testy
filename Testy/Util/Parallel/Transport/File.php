@@ -88,7 +88,7 @@ class Testy_Util_Parallel_Transport_File implements Testy_Util_Parallel_Transpor
     public function read($sId) {
         $mReturn = false;
         $sFile = $this->_sDir . DIRECTORY_SEPARATOR . self::PREFIX . $sId;
-        if (file_exists($sFile)) {
+        if (file_exists($sFile) === true) {
             $mReturn = file_get_contents($sFile);
         }
 
