@@ -9,7 +9,7 @@ class Testy_Util_Parallel_Transport_FileTest extends Tests_Util_Parallel_Transpo
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    public function setUp() {
         $this->_sTestClass = 'Testy_Util_Parallel_Transport_File';
         parent::setUp();
     }

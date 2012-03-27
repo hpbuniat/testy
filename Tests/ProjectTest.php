@@ -28,20 +28,13 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    public function setUp() {
         $this->_object = new Testy_Project(self::PROJECT_NAME);
         $this->_oConfig = new stdClass();
         $this->_oConfig->test = 'cd /tmp';
         $this->_oConfig->path = '/tmp';
         $this->_oConfig->find = '*';
         $this->_oConfig->syntax = 'echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
     }
 
     /**

@@ -6,20 +6,6 @@
 class Testy_Util_Parallel_Transport_BuilderTest extends PHPUnit_Framework_TestCase {
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp() {
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
-    }
-
-    /**
      * @dataProvider buildProvider
      */
     public function testBuild($sTransport, $sExpected) {

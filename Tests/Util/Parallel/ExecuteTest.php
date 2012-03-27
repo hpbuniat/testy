@@ -21,7 +21,7 @@ class Testy_Util_Parallel_ExecuteTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    public function setUp() {
         $aStack = array();
         for ($i = 0; $i < 4; $i++) {
             $oMock = $this->getMock(self::TEST_MOCK);
@@ -36,13 +36,6 @@ class Testy_Util_Parallel_ExecuteTest extends PHPUnit_Framework_TestCase {
         $oTransport->expects($this->any())->method('free')->will($this->returnSelf());
 
         $this->_object = new Testy_Util_Parallel_Execute($aStack, $oTransport);
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
     }
 
     /**

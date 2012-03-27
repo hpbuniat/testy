@@ -32,7 +32,7 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    public function setUp() {
         $this->_setup();
     }
 
@@ -56,13 +56,6 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
         $this->_object = new Testy_Project_Test_Runner($this->_oProject, array(
             __FILE__
         ), $this->_oConfig);
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
     }
 
     /**

@@ -21,7 +21,7 @@ abstract class Tests_Util_Parallel_Transport_TestAbstract extends PHPUnit_Framew
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    public function setUp() {
         if (class_exists($this->_sTestClass) === true) {
             $this->_object = new $this->_sTestClass();
             $this->assertInstanceOf('Testy_Util_Parallel_TransportInterface', $this->_object);
@@ -34,13 +34,6 @@ abstract class Tests_Util_Parallel_Transport_TestAbstract extends PHPUnit_Framew
         else {
             $this->markTestSkipped(sprintf('Test class %s does not exist', $this->_sTestClass));
         }
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown() {
     }
 
     /**
