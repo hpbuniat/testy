@@ -98,7 +98,7 @@ class Testy_Util_Parallel_Execute {
      *
      * @var string
      */
-    const DIR = '/tmp/Testy/';
+    const DIR = '/tmp/';
 
     /**
      * Init the Wrapper

@@ -59,17 +59,26 @@ class Testy_Util_Parallel_Transport_SharedMemory implements Testy_Util_Parallel_
     private $_rShared = null;
 
     /**
+     * The file-prefix
+     *
+     * @var string
+     */
+    const PREFIX = '_parallel_';
+
+    /**
      * (non-PHPdoc)
      * @see Testy_Util_Parallel_TransportInterface::setup()
      */
     public function setup(array $aOptions = array()) {
         if (empty($aOptions['dir']) !== true) {
-            if (is_dir($aOptions['dir']) !== true) {
-                mkdir($aOptions['dir'], 0744, true);
+            $sUniqueId = uniqid(self::PREFIX);
+            $sDir = $aOptions['dir'] . $sUniqueId;
+            if (is_dir($sDir) !== true) {
+                mkdir($sDir, 0744, true);
             }
 
-            if (is_dir($aOptions['dir']) === true) {
-                $this->_rShared = shm_attach(ftok(tempnam($aOptions['dir'] . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+            if (is_dir($sDir) === true) {
+                $this->_rShared = shm_attach(ftok(tempnam($sDir . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
                 return $this;
             }
         }
