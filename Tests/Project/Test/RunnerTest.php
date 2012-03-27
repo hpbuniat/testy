@@ -44,7 +44,7 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
      * @return void
      */
     protected function _setup($sCommand = '') {
-        $sCommand = (empty($sCommand) ? ('cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER . ' > /dev/null') : $sCommand);
+        $sCommand = ((empty($sCommand) === true) ? ('cd /tmp; echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER . ' > /dev/null') : $sCommand);
 
         $this->_oConfig = new stdClass();
         $this->_oConfig->test = $sCommand;

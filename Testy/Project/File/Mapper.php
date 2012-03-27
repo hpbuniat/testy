@@ -87,6 +87,21 @@ class Testy_Project_File_Mapper {
     const MISSING_TEST = 'The Test for %s is missing!';
 
     /**
+     * The regex-pattern for File -> Test replacement
+     *
+     *  @var string
+     */
+    const MAPPING_PATTERN = '!{([\.\w-/]+)\|([\.\w-/]+)}!i';
+
+    /**
+     * The regex-pattern to replace the mapping pattern
+     *
+     * @var string
+     */
+    const MAPPING_REPLACE = '!{.*?}!i';
+
+
+    /**
      * Create the builder
      *
      * @param  string $sCommand The command to execute
@@ -109,13 +124,13 @@ class Testy_Project_File_Mapper {
      *
      * @return Testy_Project_File_Mapper
      *
-     * @throws Testy_Project_Test_Exception If no matching test is found
+     * @throws Testy_Project_File_Exception If no matching test is found
      */
     public function map() {
         $this->_sTestFile = $this->_sFile;
 
         $aMatch = array();
-        if (preg_match_all(' !{([\.\w-/]+)\|([\.\w-/]+)}!i', $this->_sCommand, $aMatch) !== 0) {
+        if (preg_match_all(self::MAPPING_PATTERN, $this->_sCommand, $aMatch) !== 0) {
             $aSearch = $aReplace = array();
             if (empty($aMatch[1]) !== true and empty($aMatch[2]) !== true) {
                 $aSearch = $aMatch[1];
@@ -139,7 +154,7 @@ class Testy_Project_File_Mapper {
             }
         }
 
-        $this->_sCommand = trim(preg_replace('!{.*?}!i', '', $this->_sCommand));
+        $this->_sCommand = trim(preg_replace(self::MAPPING_REPLACE, '', $this->_sCommand));
         $this->_sCommand = str_replace(Testy_Project_Test_Runner::FILE_PLACEHOLDER, $this->_sTestFile, $this->_sCommand);
 
         return $this;

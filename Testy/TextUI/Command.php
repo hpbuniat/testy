@@ -141,14 +141,14 @@ class Testy_TextUI_Command {
      *
      * @param  array $argv
      *
-     * @return Testy_TextUI_Command
+     * @return void
      *
      * @codeCoverageIgnore
      */
     public function run(array $argv) {
         try {
             if ($this->handleArguments($argv) === false) {
-                exit(self::SUCCESS_EXIT);
+                return self::SUCCESS_EXIT;
             }
 
             $oWatch = new Testy_Watch();
@@ -168,7 +168,7 @@ class Testy_TextUI_Command {
                     }
                 }
 
-                $sTransport = isset($oConfig->setup->parallel) ? $oConfig->setup->parallel : Testy_Util_Parallel_Transport_Builder::TRANSPORT_DEFAULT;
+                $sTransport = (isset($oConfig->setup->parallel) === true) ? $oConfig->setup->parallel : Testy_Util_Parallel_Transport_Builder::TRANSPORT_DEFAULT;
                 $oWatch->loop(Testy_Util_Parallel_Transport_Builder::build($sTransport), $oConfig->setup->sleep);
                 sleep($oConfig->setup->sleep);
             }
@@ -176,8 +176,6 @@ class Testy_TextUI_Command {
         catch (Testy_Exception $e) {
             Testy_TextUI_Output::error($e->getMessage());
         }
-
-        return $this;
     }
 
     /**

@@ -74,7 +74,7 @@ class Testy_Util_Parallel_Transport_Memcache implements Testy_Util_Parallel_Tran
      */
     public function setup(array $aOptions = array()) {
         $this->_oMemcache = new Memcache();
-        foreach ($this->_aOptions as $sOption => $mValue) {
+        foreach (array_keys($this->_aOptions) as $sOption) {
             if (empty($aOptions[$sOption]) !== true) {
                 $this->_aOptions[$sOption] = $aOptions[$sOption];
             }

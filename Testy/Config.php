@@ -97,6 +97,8 @@ class Testy_Config {
      * Create the builder
      *
      * @param  string $sFile
+     *
+     * @throws Testy_Exception If file is not found
      */
     public function __construct($sFile = null) {
         if (empty($sFile) !== true and file_exists($sFile) === true) {
@@ -111,6 +113,8 @@ class Testy_Config {
      * Create the config
      *
      * @return Testy_Config
+     *
+     * @throws Testy_Exception If no config could be created
      */
     protected function _read() {
         if ($this->_check() !== false) {
