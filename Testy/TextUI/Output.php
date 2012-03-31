@@ -54,23 +54,19 @@ class Testy_TextUI_Output {
     /**
      * Print an Error
      *
-     * @param  string $message
-     * @param  boolean $exit
+     * @param string $message
      *
      * @return void
      */
-    static public function error($message, $exit = true) {
+    static public function error($message) {
         print_r('Error: ' . $message . PHP_EOL);
-        if ($exit === true) {
-            exit(Testy_TextUI_Command::ERROR_EXIT);
-        }
     }
 
     /**
      * Print an Info
      *
-     * @param  string $message
-     * @param  boolean $bReturn
+     * @param string $message
+     * @param boolean $bReturn
      *
      * @return void
      */
@@ -82,8 +78,8 @@ class Testy_TextUI_Output {
     /**
      * Write to ouput
      *
-     * @param  string $message
-     * @param  boolean $bReturn
+     * @param string $message
+     * @param boolean $bReturn
      *
      * @return void
      */

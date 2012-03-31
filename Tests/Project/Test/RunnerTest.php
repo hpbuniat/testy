@@ -52,7 +52,8 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
         $this->_oConfig->find = '*';
 
         $this->_oProject = new Testy_Project(self::PROJECT_NAME);
-        $this->_oProject->config($this->_oConfig);
+        $this->assertInstanceOf('Testy_Project', $this->_oProject->config($this->_oConfig));
+        $this->assertInstanceOf('Testy_Project', $this->_oProject->setCommand(Tests_Helper_Command::getSuccess()));
         $this->_object = new Testy_Project_Test_Runner($this->_oProject, array(
             __FILE__
         ), $this->_oConfig);
@@ -100,7 +101,7 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
             __DIR__ . DIRECTORY_SEPARATOR . 'ExceptionTest.php'
         );
         $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, $this->_oConfig);
-        $oRunner->run();
+        $oRunner->run(Tests_Helper_Command::getSuccess());
 
         $this->assertEquals(count($aFiles), $oRunner->getCommands());
     }
@@ -108,13 +109,14 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
     /**
      * Test passing the command as string
      */
-    public function testCommandAsString() {
+    public function testSetCommand() {
         $aFiles = array(
             __FILE__,
             __DIR__ . DIRECTORY_SEPARATOR . 'ExceptionTest.php'
         );
-        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, 'echo $file');
-        $oRunner->run();
+
+        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, $this->_oConfig);
+        $oRunner->setCommand('echo $file')->run();
 
         $this->assertEquals(count($aFiles), $oRunner->getCommands());
         $this->assertEquals('echo ' . end($aFiles), $oRunner->getLastCommand());
@@ -122,14 +124,21 @@ class Testy_Project_Test_RunnerTest extends PHPUnit_Framework_TestCase {
 
     /**
      * Test the result, if a command does not succeed
-     *
-     * @expectedException Testy_Project_Test_Exception
      */
     public function testCommandFailure() {
         $aFiles = array(
             __FILE__,
         );
-        $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, './' . uniqid());
-        $oRunner->run();
+
+        try {
+
+            $this->assertInstanceOf('Testy_Project', $this->_oProject->setCommand(Tests_Helper_Command::getFailure()));
+            $oRunner = new Testy_Project_Test_Runner($this->_oProject, $aFiles, $this->_oConfig);
+            $oRunner->setCommand('./' . uniqid())->run();
+            $this->fail('An exception should have been thrown');
+        }
+        catch (Testy_Project_Test_Exception $e) {
+            $this->assertEquals('', $e->getMessage());
+        }
     }
 }

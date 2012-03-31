@@ -78,21 +78,35 @@ class Testy_Util_Command {
      * @param string $sCommand
      */
     public function __construct($sCommand = null) {
-        $this->command($sCommand);
+        $this->setCommand($sCommand);
     }
 
     /**
      * Setter for the command
+     * - will implicitly call reset
      *
      * @param  string $sCommand
      *
      * @return Testy_Util_Command
      */
-    public function command($sCommand = null) {
+    public function setCommand($sCommand = null) {
         if (empty($sCommand) !== true) {
+            $this->reset();
             $this->_sCommand = $sCommand;
         }
 
+        return $this;
+    }
+
+    /**
+     * Reset the command wrapper
+     *
+     * @return Testy_Util_Command
+     */
+    public function reset() {
+        $this->_iStatus = 0;
+        $this->_sCommand = '';
+        $this->_sReturn = '';
         return $this;
     }
 
@@ -104,7 +118,7 @@ class Testy_Util_Command {
      * @return Testy_Util_Command
      */
     public function execute($sCommand = null) {
-        $this->command($sCommand);
+        $this->setCommand($sCommand);
         if (defined('VERBOSE') === true and VERBOSE === true) {
             Testy_TextUI_Output::info($this->_sCommand);
         }

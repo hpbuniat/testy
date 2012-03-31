@@ -101,6 +101,13 @@ class Testy_Project {
     private $_bEnabled = true;
 
     /**
+     * The command-executor
+     *
+     * @var Testy_Util_Command
+     */
+    private $_oCommand = null;
+
+    /**
      * Info-Text, if there are lint errors
      *
      * @var string
@@ -136,6 +143,27 @@ class Testy_Project {
     public function __construct($sName = '') {
         $this->_sName = $sName;
         $this->_aNotifiers = array();
+    }
+
+    /**
+     * Set the command executor
+     *
+     * @param  Testy_Util_Command $oCommand
+     *
+     * @return Testy_Project
+     */
+    public function setCommand(Testy_Util_Command $oCommand) {
+        $this->_oCommand = $oCommand;
+        return $this;
+    }
+
+    /**
+     * Get the command-executor
+     *
+     * @return Testy_Util_Command
+     */
+    public function getCommand() {
+        return $this->_oCommand;
     }
 
     /**
@@ -212,9 +240,8 @@ class Testy_Project {
      * @return Testy_Project
      */
     public function check($iLast = 0) {
-        $sDate = date('Ymd H:i:s', $iLast);
-        $oCommand = new Testy_Util_Command('find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . $sDate . '"');
-        $sReturn = trim($oCommand->execute()->get());
+        $sCommand = 'find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . date('Ymd H:i:s', $iLast) . '"';
+        $sReturn = trim($this->_oCommand->setCommand($sCommand)->execute()->get());
 
         $this->_aFiles = array();
         if (empty($sReturn) !== true) {
@@ -222,8 +249,26 @@ class Testy_Project {
             array_walk($this->_aFiles, 'trim');
         }
 
-        unset($oCommand, $sDate, $sReturn);
+        unset($sDate, $sReturn);
         return $this;
+    }
+
+    /**
+     * Determine, if the test should be repeated
+     *
+     * @return boolean
+     */
+    public function shouldRepeat() {
+        return (isset($this->_oConfig->repeat) !== true or $this->_oConfig->repeat == true);
+    }
+
+    /**
+     * Determine, if a syntax-check should be done
+     *
+     * @return boolean
+     */
+    public function shouldSyntaxCheck() {
+        return (isset($this->_oConfig->syntax) === true and is_string($this->_oConfig->syntax) > 0 and strlen($this->_oConfig->syntax) > 0);
     }
 
     /**
@@ -237,8 +282,9 @@ class Testy_Project {
         }
 
         $this->notify(Testy_AbstractNotifier::INFO, sprintf(self::INFO, implode(', ', $this->_aFiles)));
-        if (empty($this->_oConfig->syntax) === true or $this->_lint() === true) {
-            $bRepeat = (empty($this->_oConfig->repeat) === true or $this->_oConfig->repeat != true);
+
+        $oSyntaxRunnner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig);
+        if ($this->shouldSyntaxCheck() !== true or $this->lint($oSyntaxRunnner) === true) {
             $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig);
             try {
                 try {
@@ -248,7 +294,7 @@ class Testy_Project {
                     $this->notify(Testy_AbstractNotifier::INFO, $oException->getMessage());
                 }
 
-                if ($bRepeat === true and $oRunner->executeSingle() === true) {
+                if ($this->shouldRepeat() === true and $oRunner->executeSingle() === true) {
                     $this->notify(Testy_AbstractNotifier::INFO, self::REPEAT);
                     $this->notify(Testy_AbstractNotifier::SUCCESS, $oRunner->repeat()->run()->get());
                 }
@@ -260,19 +306,21 @@ class Testy_Project {
             unset($oRunner);
         }
 
+        unset($oSyntaxRunnner);
         return $this;
     }
 
     /**
      * Lint the changed files
      *
+     * @param  Testy_Project_Test_Runner $oRunner
+     *
      * @return boolean
      */
-    protected function _lint() {
+    public function lint(Testy_Project_Test_Runner $oRunner) {
         $bReturn = true;
-        $oRunner = new Testy_Project_Test_Runner($this, $this->_aFiles, $this->_oConfig->syntax);
         try {
-            $oRunner->run();
+            $oRunner->setCommand($this->_oConfig->syntax)->run();
         }
         catch (Testy_Project_Test_Exception $oException) {
             $bReturn = false;
@@ -282,7 +330,6 @@ class Testy_Project {
             }
         }
 
-        unset($oRunner);
         return $bReturn;
     }
 

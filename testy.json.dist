@@ -27,10 +27,11 @@
     "projects": {
         "testy": {
             "path": "~/workspace/testy",
-            "test": "phpunit $file {Testy|Test} {.php|Test.php}", 
-            "test_dir": "~/workspace/testy;",
+            "test": "phpunit $file {Testy|Tests} {.php|Test.php}", 
+            "test_dir": "~/workspace/testy",
             "syntax": "php -l $file",
-            "find": "*.php"
+            "find": "*.php",
+            "repeat": true
         },
         "testy-jshint": {
             "path": "~/workspace/testy", 

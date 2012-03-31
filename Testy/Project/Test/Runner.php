@@ -147,18 +147,31 @@ class Testy_Project_Test_Runner {
      *
      * @param  Testy_Project $oProject
      * @param  array $aFiles
-     * @param  mixed $mConfig Project-Config or Test-Command
+     * @param  stdClass $oConfig Project-Config
      */
-    public function __construct(Testy_Project $oProject, array $aFiles, $mConfig) {
+    public function __construct(Testy_Project $oProject, array $aFiles, stdClass $oConfig) {
         $this->_oProject = $oProject;
         $this->_aFiles = $aFiles;
 
         $this->_sChangeDir = '';
-        if ($mConfig instanceof stdClass and isset($mConfig->test_dir) === true) {
-            $this->_sChangeDir = $mConfig->test_dir;
+        $this->_sCommand = $oConfig->test;
+        if (isset($oConfig->test_dir) === true) {
+            $this->_sChangeDir = $oConfig->test_dir;
         }
+    }
 
-        $this->_sCommand = ($mConfig instanceof stdClass) ? $mConfig->test : $mConfig;
+    /**
+     * Set the command & reset changedir
+     *
+     * @param  string $sCommand
+     *
+     * @return Testy_Project_Test_Runner
+     */
+    public function setCommand($sCommand) {
+        $this->_sCommand = $sCommand;
+        $this->_sChangeDir = '';
+
+        return $this;
     }
 
     /**
@@ -262,8 +275,9 @@ class Testy_Project_Test_Runner {
         $this->_iCommands++;
         $this->_sLastCommand = $sCommand;
 
-        $oCommand = new Testy_Util_Command();
-        $this->_sReturn = $oCommand->execute($this->_sLastCommand)->get();
+        $oCommand = $this->_oProject->getCommand();
+        $this->_sReturn = $oCommand->setCommand($this->_sLastCommand)->execute()->get();
+
         if ($oCommand->isSuccess() !== true) {
             throw new Testy_Project_Test_Exception($this->_sReturn);
         }

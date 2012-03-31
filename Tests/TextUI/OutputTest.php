@@ -12,7 +12,7 @@ class Testy_TextUI_OutputTest extends PHPUnit_Framework_TestCase {
      */
     public function testError() {
         $this->expectOutputString('Error: ' . self::TEST_STRING . PHP_EOL);
-        Testy_TextUI_Output::error(self::TEST_STRING, false);
+        Testy_TextUI_Output::error(self::TEST_STRING);
     }
 
     /**

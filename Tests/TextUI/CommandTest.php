@@ -34,6 +34,18 @@ class Testy_TextUI_CommandTest extends PHPUnit_Framework_TestCase {
         $this->assertEmpty($this->_object->getArguments());
 
         $aArguments = array(
+            '--unknown'
+        );
+        try {
+            $this->_object->handleArguments($aArguments);
+        }
+        catch (InvalidArgumentException $e) {
+            $this->assertEquals('Unknown Option', $e->getMessage());
+        }
+
+        $this->assertEmpty($this->_object->getArguments());
+
+        $aArguments = array(
             '--verbose'
         );
         try {

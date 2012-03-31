@@ -69,7 +69,7 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
      * Setup
      */
     public function setUp() {
-        $this->_oConfig = new stdClass;
+        $this->_oConfig = new stdClass();
         $this->_oConfig->test = 'phpunit';
     }
 
@@ -81,6 +81,7 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
             $this->getMock('Testy_Notifier_Stdout')
         ));
         $this->assertInstanceOf('Testy_Project', $oProject);
+        $this->assertInstanceOf('Testy_Util_Command', $oProject->getCommand());
         $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
         unset($oProject);
     }
@@ -89,7 +90,7 @@ class Testy_Util_BuilderTest extends PHPUnit_Framework_TestCase {
      * Test failure
      */
     public function testBuildFailed() {
-        $oConfig = new stdClass;
+        $oConfig = new stdClass();
         try {
             Testy_Project_Builder::build(self::PROJECT_NAME, $oConfig, array());
             $this->fail('an exception should have been thrown, if no test-command ist configured');

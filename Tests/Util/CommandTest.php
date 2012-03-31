@@ -57,7 +57,7 @@ class Testy_Util_CommandTest extends PHPUnit_Framework_TestCase {
     public function testCommandConstruct() {
         $o = new Testy_Util_Command('dir');
         $this->assertInstanceOf('Testy_Util_Command', $o->execute());
-        $this->asserttrue($o->isSuccess());
+        $this->assertTrue($o->isSuccess());
         $this->assertContains('testy.php', $o->get());
         $this->assertEquals(0, $o->status());
     }
@@ -67,9 +67,9 @@ class Testy_Util_CommandTest extends PHPUnit_Framework_TestCase {
      */
     public function testCommandCommand() {
         $o = new Testy_Util_Command();
-        $this->assertInstanceOf('Testy_Util_Command', $o->command('dir'));
+        $this->assertInstanceOf('Testy_Util_Command', $o->setCommand('dir'));
         $this->assertInstanceOf('Testy_Util_Command', $o->execute());
-        $this->asserttrue($o->isSuccess());
+        $this->assertTrue($o->isSuccess());
         $this->assertContains('testy.php', $o->get());
         $this->assertEquals(0, $o->status());
     }
@@ -80,7 +80,9 @@ class Testy_Util_CommandTest extends PHPUnit_Framework_TestCase {
     public function testCommandFailure() {
         $o = new Testy_Util_Command();
         $this->assertInstanceOf('Testy_Util_Command', $o->execute('notExisting'));
-        $this->assertfalse($o->isSuccess());
+        $this->assertFalse($o->isSuccess());
         $this->assertEquals(127, $o->status());
+        $this->assertInstanceOf('Testy_Util_Command', $o->reset());
+        $this->assertEquals(0, $o->status());
     }
 }

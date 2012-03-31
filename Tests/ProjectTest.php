@@ -13,6 +13,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     const PROJECT_NAME = 'Testy_Test';
 
     /**
+     *
      * @var Testy_Project
      */
     protected $_object;
@@ -30,11 +31,88 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      */
     public function setUp() {
         $this->_object = new Testy_Project(self::PROJECT_NAME);
+        $this->assertInstanceOf('Testy_Project', $this->_object->setCommand(Tests_Helper_Command::getSuccess()));
+
         $this->_oConfig = new stdClass();
         $this->_oConfig->test = 'cd /tmp';
         $this->_oConfig->path = '/tmp';
         $this->_oConfig->find = '*';
         $this->_oConfig->syntax = 'echo ' . Testy_Project_Test_Runner::FILE_PLACEHOLDER;
+    }
+
+    /**
+     * Test the should-repeat getter
+     *
+     * @param boolean $bExpected
+     * @param mixed $mRepeatValue
+     *            @dataProvider shouldRepeatProvider
+     */
+    public function testShouldRepeat($bExpected, $mRepeatValue = null) {
+        if (is_null($mRepeatValue) !== true) {
+            $this->_oConfig->repeat = $mRepeatValue;
+        }
+
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
+        $this->assertEquals($bExpected, $this->_object->shouldRepeat());
+    }
+
+    /**
+     * Dataprovider for testShouldRepeat
+     */
+    public function shouldRepeatProvider() {
+        return array(
+            array(
+                true
+            ),
+            array(
+                true,
+                true
+            ),
+            array(
+                false,
+                false
+            )
+        );
+    }
+
+    /**
+     * Test the should-syntax-check getter
+     *
+     * @param boolean $bExpected
+     * @param mixed $mRepeatValue
+     *            @dataProvider shouldSyntaxCheckProvider
+     */
+    public function testShouldSyntaxCheck($bExpected, $mRepeatValue = null) {
+        unset($this->_oConfig->syntax);
+        if (is_null($mRepeatValue) !== true) {
+            $this->_oConfig->syntax = $mRepeatValue;
+        }
+
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
+        $this->assertEquals($bExpected, $this->_object->shouldSyntaxCheck());
+    }
+
+    /**
+     * Dataprovider for testShouldSyntaxCheck
+     */
+    public function shouldSyntaxCheckProvider() {
+        return array(
+            array(
+                false
+            ),
+            array(
+                false,
+                true
+            ),
+            array(
+                false,
+                false
+            ),
+            array(
+                true,
+                'php -l $file'
+            )
+        );
     }
 
     /**
@@ -59,7 +137,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
             $this->_object->config(new stdClass());
             $this->fail('An exception should be raised, when setting the test-config');
         }
-        catch(Exception $e) {
+        catch (Exception $e) {
             $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
         }
     }
@@ -70,6 +148,7 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      * @depends testAddNotifier
      */
     public function testCheck() {
+        $this->assertInstanceOf('Testy_Project', $this->_object->setCommand(Tests_Helper_Command::getSuccess('1' . PHP_EOL . '2' . PHP_EOL . '3')));
         $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
         $this->assertInstanceOf('Testy_Project', $this->_object->check(0));
         $this->assertNotEmpty($this->_object->getFiles());
@@ -96,8 +175,9 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     public function testGetProjectHash() {
         $this->assertEquals(32, strlen($this->_object->getProjectHash()));
 
-        $oObject = new Testy_Project('test');
-        $this->assertNotEquals($oObject->getProjectHash(), $this->_object->getProjectHash());
+        $oProject = new Testy_Project('test');
+        $this->assertNotEquals($oProject->getProjectHash(), $this->_object->getProjectHash());
+        unset($oProject);
     }
 
     /**
@@ -114,15 +194,56 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
         $oConfig->find = '*';
         $oConfig->enabled = false;
 
-        $oObject = new Testy_Project('test');
-        $oObject->config($oConfig);
-        $this->assertFalse($oObject->isEnabled());
+        $oProject = new Testy_Project('test');
+        $oProject->config($oConfig);
+        $this->assertFalse($oProject->isEnabled());
+        unset($oProject);
     }
 
     /**
+     * Test calling the notifiy method
+     *
      * @depends testAddNotifier
      */
     public function testNotify() {
         $this->assertInstanceOf('Testy_Project', $this->_object->notify('', ''));
+    }
+
+    /**
+     * Test the lint-command
+     *
+     * @dataProvider lintProvider
+     */
+    public function testLint($bExpected, $sCommand = 'Success') {
+        $this->_oConfig->syntax = 'test';
+        $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
+        $this->assertTrue($this->_object->shouldSyntaxCheck());
+
+        $sCommand = 'get' . ucfirst($sCommand);
+        $this->assertInstanceOf('Testy_Project', $this->_object->setCommand(Tests_Helper_Command::$sCommand()));
+
+        $oRunner = new Testy_Project_Test_Runner($this->_object, array(
+            __FILE__
+        ), $this->_oConfig);
+        $this->assertEquals($bExpected, $this->_object->lint($oRunner));
+        unset($oRunner, $sCommand);
+    }
+
+    /**
+     * Dataprovider for testLint
+     *
+     * @return array
+     */
+    public function lintProvider() {
+        return array(
+            array(
+                true,
+                'Success'
+            ),
+            array(
+                false,
+                'Failure'
+            )
+        );
     }
 }

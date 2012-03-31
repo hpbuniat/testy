@@ -69,7 +69,7 @@ class Testy_Project_Builder {
      */
     public static function build($sName, stdClass $oConfig, $aNotifiers) {
         $oProject = new Testy_Project($sName);
-        $oProject->config($oConfig);
+        $oProject->config($oConfig)->setCommand(new Testy_Util_Command());
         foreach ($aNotifiers as $oNotifier) {
             $oProject->addNotifier($oNotifier);
         }

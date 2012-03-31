@@ -190,7 +190,7 @@ class Testy_TextUI_Command {
         try {
             $this->_aOptions = @$oConsole->getopt($aParameters, '', array_keys($this->_aLongOptions));
             if ($this->_aOptions instanceof PEAR_Error) {
-                Testy_TextUI_Output::error($this->_aOptions->getMessage());
+                throw new InvalidArgumentException($this->_aOptions->getMessage());
             }
 
             if (empty($this->_aOptions[0]) !== true) {
@@ -213,12 +213,12 @@ class Testy_TextUI_Command {
                             return false;
 
                         default:
-                            throw new RuntimeException('Unknown option');
+                            throw new InvalidArgumentException('Unknown option');
                     }
                 }
             }
         }
-        catch (RuntimeException $e) {
+        catch (InvalidArgumentException $e) {
             Testy_TextUI_Output::info($e->getMessage());
         }
 
