@@ -74,6 +74,15 @@ class Testy_Watch {
     }
 
     /**
+     * Get the stack of projects
+     *
+     * @return array
+     */
+    public function getStack() {
+        return $this->_aStack;
+    }
+
+    /**
      * Add a project to watch
      *
      * @param  Testy_Project $oProject

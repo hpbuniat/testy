@@ -39,8 +39,8 @@ class Testy_TextUI_CommandTest extends PHPUnit_Framework_TestCase {
         try {
             $this->_object->handleArguments($aArguments);
         }
-        catch (InvalidArgumentException $e) {
-            $this->assertEquals('Unknown Option', $e->getMessage());
+        catch (Testy_Exception $e) {
+            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
         }
 
         $this->assertEmpty($this->_object->getArguments());

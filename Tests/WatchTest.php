@@ -17,16 +17,26 @@ class Testy_WatchTest extends PHPUnit_Framework_TestCase {
      */
     public function setUp() {
         $this->_object = new Testy_Watch();
+        $this->assertEmpty($this->_object->getStack());
     }
 
     /**
-     * Test simple add call
+     * Test that a disabled project will not be added
      */
-    public function testAdd() {
-        $oMock = $this->getMockBuilder('Testy_Project')->getMock();
-        $oMock->expects($this->any())->method('isEnabled')->will($this->returnValue(true));
+    public function testAddNotEnabled() {
+        $this->assertInstanceOf('Testy_Watch', $this->_object->add(Tests_Helper_Project::getDisabled()));
+        $this->assertEmpty($this->_object->getStack());
+    }
 
-        $this->assertInstanceOf('Testy_Watch', $this->_object->add($oMock));
+    /**
+     * Test simple add call and that a added project will be removed
+     */
+    public function testAddAndRemove() {
+        $this->assertInstanceOf('Testy_Watch', $this->_object->add(Tests_Helper_Project::getEnabled()));
+        $this->assertNotEmpty($this->_object->getStack());
+
+        $this->assertInstanceOf('Testy_Watch', $this->_object->add(Tests_Helper_Project::getDisabled()));
+        $this->assertEmpty($this->_object->getStack());
     }
 
     /**
