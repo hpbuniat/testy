@@ -184,6 +184,8 @@ class Testy_TextUI_Command {
      * @param  array $aParameters
      *
      * @return boolean
+     *
+     * @throws Testy_Exception
      */
     public function handleArguments(array $aParameters = array()) {
         $oConsole = new Console_Getopt();
@@ -214,6 +216,7 @@ class Testy_TextUI_Command {
 
                         default:
                             throw new InvalidArgumentException('Unknown option');
+                            break;
                     }
                 }
             }

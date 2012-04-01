@@ -249,7 +249,7 @@ class Testy_Project {
             array_walk($this->_aFiles, 'trim');
         }
 
-        unset($sDate, $sReturn);
+        unset($sCommand, $sReturn);
         return $this;
     }
 
