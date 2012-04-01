@@ -45,12 +45,11 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      *
      * @param boolean $bExpected
      * @param mixed $mRepeatValue
-     *            @dataProvider shouldRepeatProvider
+     *
+     * @dataProvider shouldRepeatProvider
      */
     public function testShouldRepeat($bExpected, $mRepeatValue = null) {
-        if (is_null($mRepeatValue) !== true) {
-            $this->_oConfig->repeat = $mRepeatValue;
-        }
+        $this->_oConfig->repeat = $mRepeatValue;
 
         $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
         $this->assertEquals($bExpected, $this->_object->shouldRepeat());
@@ -80,13 +79,12 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
      *
      * @param boolean $bExpected
      * @param mixed $mRepeatValue
-     *            @dataProvider shouldSyntaxCheckProvider
+     *
+     * @dataProvider shouldSyntaxCheckProvider
      */
     public function testShouldSyntaxCheck($bExpected, $mRepeatValue = null) {
         unset($this->_oConfig->syntax);
-        if (is_null($mRepeatValue) !== true) {
-            $this->_oConfig->syntax = $mRepeatValue;
-        }
+        $this->_oConfig->syntax = $mRepeatValue;
 
         $this->assertInstanceOf('Testy_Project', $this->_object->config($this->_oConfig));
         $this->assertEquals($bExpected, $this->_object->shouldSyntaxCheck());

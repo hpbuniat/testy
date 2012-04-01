@@ -21,42 +21,53 @@ class Testy_TextUI_CommandTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Test handleArguments
      *
+     * @param  boolean $bExpected
+     * @param  array $aArguments
+     *
+     * @dataProvider handleArgumentsProvider
      */
-    public function testHandleArguments() {
-        try {
-            $this->_object->handleArguments();
-        }
-        catch (Exception $e) {
-            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
-        }
-
-        $this->assertEmpty($this->_object->getArguments());
-
-        $aArguments = array(
-            '--unknown'
-        );
+    public function testHandleArguments($bExpected, $aArguments) {
         try {
             $this->_object->handleArguments($aArguments);
         }
-        catch (Testy_Exception $e) {
-            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
+        catch (Exception $oConfigException) {
+            $this->assertEquals(Testy_Config::ERROR, $oConfigException->getMessage());
         }
 
-        $this->assertEmpty($this->_object->getArguments());
+        $aReturn = $this->_object->getArguments();
+        $this->assertEquals($bExpected, (empty($aReturn) !== true));
+    }
 
-        $aArguments = array(
-            '--verbose'
+    /**
+     * Data-provider for testHandleArguments
+     */
+    public function handleArgumentsProvider() {
+        return array(
+            array(
+                false,
+                array()
+            ),
+            array(
+                false,
+                array(
+                    '--unknown'
+                )
+            ),
+            array(
+                false,
+                array(
+                    '--verbose'
+                )
+            ),
+            array(
+                true,
+                array(
+                    '--config=test'
+                )
+            )
         );
-        try {
-            $this->_object->handleArguments($aArguments);
-        }
-        catch (Exception $e) {
-            $this->assertEquals(Testy_Config::ERROR, $e->getMessage());
-        }
-
-        $this->_object->getArguments();
-        $this->assertTrue(defined('VERBOSE'));
     }
 
     /**
