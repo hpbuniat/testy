@@ -118,6 +118,8 @@ class Testy_Util_Parallel_Transport_File implements Testy_Util_Parallel_Transpor
             }
         }
 
+        rmdir($this->_sDir);
+
         return $this;
     }
 }

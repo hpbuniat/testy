@@ -59,6 +59,13 @@ class Testy_Util_Parallel_Transport_SharedMemory implements Testy_Util_Parallel_
     private $_rShared = null;
 
     /**
+     * The directory for the shm-semaphores
+     *
+     * @var string
+     */
+    protected $_sDir = null;
+
+    /**
      * The file-prefix
      *
      * @var string
@@ -72,13 +79,13 @@ class Testy_Util_Parallel_Transport_SharedMemory implements Testy_Util_Parallel_
     public function setup(array $aOptions = array()) {
         if (empty($aOptions['dir']) !== true) {
             $sUniqueId = uniqid(self::PREFIX);
-            $sDir = $aOptions['dir'] . $sUniqueId;
-            if (is_dir($sDir) !== true) {
-                mkdir($sDir, 0744, true);
+            $this->_sDir = $aOptions['dir'] . $sUniqueId;
+            if (is_dir($this->_sDir) !== true) {
+                mkdir($this->_sDir, 0744, true);
             }
 
-            if (is_dir($sDir) === true) {
-                $this->_rShared = shm_attach(ftok(tempnam($sDir . DIRECTORY_SEPARATOR . microtime(true), __FILE__), 'a'), 4194304);
+            if (is_dir($this->_sDir) === true) {
+                $this->_rShared = shm_attach(ftok(tempnam($this->_sDir, __FILE__), 'a'), 4194304);
                 return $this;
             }
         }
@@ -116,6 +123,15 @@ class Testy_Util_Parallel_Transport_SharedMemory implements Testy_Util_Parallel_
     public function free() {
         shm_remove($this->_rShared);
         shm_detach($this->_rShared);
+        $oIter = new DirectoryIterator($this->_sDir);
+        foreach ($oIter as $oFile) {
+            if ($oFile->isFile() === true) {
+                unlink($oFile->getPathname());
+            }
+        }
+
+        rmdir($this->_sDir);
+
         return $this;
     }
 }
