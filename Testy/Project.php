@@ -255,7 +255,7 @@ class Testy_Project {
             $aFiles = array_merge($aFiles, $this->_findChangedFiles($this->_sTestPath, $iLast));
         }
 
-        $this->_aFiles = $aFiles;
+        $this->_aFiles = array_unique($aFiles);
 
         unset($sCommand, $sReturn);
         return $this;
