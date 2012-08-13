@@ -41,7 +41,7 @@ abstract class Tests_Util_Parallel_Transport_TestAbstract extends PHPUnit_Framew
      */
     public function testAll() {
         $sTestVal = uniqid();
-        $sTestKey = uniqid();
+        $sTestKey = (int) microtime(true);
 
         $this->assertFalse($this->_object->read($sTestKey));
         $this->assertInstanceOf($this->_sTestClass, $this->_object->write($sTestKey, $sTestVal));

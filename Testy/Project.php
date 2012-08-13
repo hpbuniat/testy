@@ -66,6 +66,13 @@ class Testy_Project {
     private $_sPath = null;
 
     /**
+     * The path, where tests are located
+     *
+     * @var string
+     */
+    private $_sTestPath = null;
+
+    /**
      * The find pattern to detect modification
      *
      * @var string
@@ -198,6 +205,8 @@ class Testy_Project {
      */
     public function config(stdClass $oConfig) {
         $this->_sPath = (isset($oConfig->path) === true) ? $oConfig->path : '.';
+        $this->_sTestPath = (isset($oConfig->test_dir) === true) ? $oConfig->test_dir : false;
+
         if (isset($oConfig->test) === false) {
             throw new Testy_Exception(sprintf(self::MISSING_TEST_COMMAND, $this->getName()));
         }
@@ -240,14 +249,13 @@ class Testy_Project {
      * @return Testy_Project
      */
     public function check($iLast = 0) {
-        $sCommand = 'find ' . $this->_sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . date('Ymd H:i:s', $iLast) . '"';
-        $sReturn = trim($this->_oCommand->setCommand($sCommand)->execute()->get());
-
-        $this->_aFiles = array();
-        if (empty($sReturn) !== true) {
-            $this->_aFiles = explode(PHP_EOL, $sReturn);
-            array_walk($this->_aFiles, 'trim');
+        $aFiles = array();
+        $aFiles = array_merge($aFiles, $this->_findChangedFiles($this->_sPath, $iLast));
+        if ($this->_sTestPath !== false and $this->_sPath !== $this->_sTestPath) {
+            $aFiles = array_merge($aFiles, $this->_findChangedFiles($this->_sTestPath, $iLast));
         }
+
+        $this->_aFiles = $aFiles;
 
         unset($sCommand, $sReturn);
         return $this;
@@ -268,7 +276,7 @@ class Testy_Project {
      * @return boolean
      */
     public function shouldSyntaxCheck() {
-        return (isset($this->_oConfig->syntax) === true and is_string($this->_oConfig->syntax) > 0 and strlen($this->_oConfig->syntax) > 0);
+        return (isset($this->_oConfig->syntax) === true and is_string($this->_oConfig->syntax) === true and strlen($this->_oConfig->syntax) > 0);
     }
 
     /**
@@ -366,6 +374,27 @@ class Testy_Project {
     public function setFiles(array $aFiles = array()) {
         $this->_aFiles = $aFiles;
         return $this;
+    }
+
+    /**
+     * Get changed files in a path
+     *
+     * @param  string $sPath
+     * @param  int $iLast
+     *
+     * @return array
+     */
+    protected function _findChangedFiles($sPath, $iLast) {
+        $sCommand = 'find ' . $sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . date('Ymd H:i:s', $iLast) . '"';
+        $sReturn = trim($this->_oCommand->setCommand($sCommand)->execute()->get());
+
+        $aFiles = array();
+        if (empty($sReturn) !== true) {
+            $aFiles = explode(PHP_EOL, $sReturn);
+            array_walk($aFiles, 'trim');
+        }
+
+        return $aFiles;
     }
 
 }
