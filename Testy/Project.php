@@ -77,7 +77,9 @@ class Testy_Project {
      *
      * @var string
      */
-    private $_sPattern = '*.php';
+    private $_aPattern = array(
+        '*.php'
+    );
 
     /**
      * The projects config
@@ -141,6 +143,13 @@ class Testy_Project {
      * @var string
      */
     const INFO = 'Modifications detected (%s)';
+
+    /**
+     * The date-format for find
+     *
+     * @var string
+     */
+    const FIND_DATE_FORMAT = 'Ymd H:i:s';
 
     /**
      * Init the project
@@ -212,7 +221,8 @@ class Testy_Project {
         }
 
         if (isset($oConfig->find) === true) {
-            $this->_sPattern = $oConfig->find;
+            $this->_aPattern = explode(',', $oConfig->find);
+            array_walk($this->_aPattern, array($this, '_createFindPattern'));
         }
 
         if (isset($oConfig->enabled) === true) {
@@ -377,6 +387,19 @@ class Testy_Project {
     }
 
     /**
+     * Get the the command-string which is used to find changed-files
+     *
+     * @param  string $sPath
+     * @param  int $iLast
+     *
+     * @return string
+     */
+    public function getFindCommand($sPath, $iLast) {
+        $sCommand = 'find %s -type f \( %s \) -newermt "%s"';
+        return sprintf($sCommand, $sPath, implode(' -o ', $this->_aPattern), date(self::FIND_DATE_FORMAT, $iLast));
+    }
+
+    /**
      * Get changed files in a path
      *
      * @param  string $sPath
@@ -385,9 +408,7 @@ class Testy_Project {
      * @return array
      */
     protected function _findChangedFiles($sPath, $iLast) {
-        $sCommand = 'find ' . $sPath . ' -type f -name "' . $this->_sPattern . '" -newermt "' . date('Ymd H:i:s', $iLast) . '"';
-        $sReturn = trim($this->_oCommand->setCommand($sCommand)->execute()->get());
-
+        $sReturn = trim($this->_oCommand->setCommand($this->getFindCommand($sPath, $iLast))->execute()->get());
         $aFiles = array();
         if (empty($sReturn) !== true) {
             $aFiles = explode(PHP_EOL, $sReturn);
@@ -397,4 +418,15 @@ class Testy_Project {
         return $aFiles;
     }
 
+    /**
+     * Create a pattern, suiteable for find
+     *
+     * @param  string $sPattern
+     *
+     * @return true
+     */
+    protected function _createFindPattern(&$sPattern) {
+        $sPattern = trim(sprintf('-name "%s"', $sPattern));
+        return true;
+    }
 }

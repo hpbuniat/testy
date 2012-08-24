@@ -199,6 +199,62 @@ class Testy_ProjectTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * The the creation of the find-command
+     *
+     * @param  stdClass $oFixture
+     * @param  string $sExpected
+     *
+     * @dataProvider getFindCommandProvider
+     */
+    public function testGetFindCommand(stdClass $oFixture, $sExpected) {
+        $oProject = new Testy_Project('test');
+        $oProject->config($oFixture);
+
+        $iTime = time();
+        $sReturn = $oProject->getFindCommand($oFixture->path, $iTime);
+        $this->assertEquals(sprintf($sExpected, date($oProject::FIND_DATE_FORMAT, $iTime)), $sReturn);
+        unset($oProject);
+    }
+
+    /**
+     * Provider for testGetFindCommand
+     *
+     * @return array
+     */
+    public function getFindCommandProvider() {
+        $aFixtures = array();
+
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp';
+        $oConfig->path = '/tmp';
+        $oConfig->find = '*';
+        $aFixtures[] = array(
+            $oConfig,
+            'find /tmp -type f \( -name "*" \) -newermt "%s"'
+        );
+
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp';
+        $oConfig->path = '/tmp /etc';
+        $oConfig->find = '*';
+        $aFixtures[] = array(
+            $oConfig,
+            'find /tmp /etc -type f \( -name "*" \) -newermt "%s"'
+        );
+
+        $oConfig = new stdClass();
+        $oConfig->test = 'cd /tmp';
+        $oConfig->path = '/tmp /etc';
+        $oConfig->find = '*,*.php';
+        $aFixtures[] = array(
+            $oConfig,
+            'find /tmp /etc -type f \( -name "*" -o -name "*.php" \) -newermt "%s"'
+        );
+
+        return $aFixtures;
+    }
+
+    /**
      * Test calling the notifiy method
      *
      * @depends testAddNotifier
