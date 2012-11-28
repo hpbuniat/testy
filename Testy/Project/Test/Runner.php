@@ -73,6 +73,13 @@ class Testy_Project_Test_Runner {
     protected $_sChangeDir = '';
 
     /**
+     * Sync-path
+     *
+     * @var stdClass
+     */
+    protected $_sSyncPath = null;
+
+    /**
      * All modified files
      *
      * @var array
@@ -158,6 +165,11 @@ class Testy_Project_Test_Runner {
         if (isset($oConfig->test_dir) === true) {
             $this->_sChangeDir = $oConfig->test_dir;
         }
+
+        $this->_sSyncPath = (isset($oConfig->sync_dir) === true and isset($oConfig->sync_dir->from) === true and isset($oConfig->sync_dir->to) === true) ? $oConfig->sync_dir : false;
+        if (empty($this->_sSyncPath) !== true) {
+            $this->_sChangeDir = str_replace($this->_sSyncPath->from, $this->_sSyncPath->to, $this->_sChangeDir);
+        }
     }
 
     /**
@@ -192,6 +204,10 @@ class Testy_Project_Test_Runner {
     public function run() {
         $bSingle = $this->executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
+            if (empty($this->_sSyncPath) !== true) {
+                $this->_sFile = str_replace($this->_sSyncPath->from, $this->_sSyncPath->to, $this->_sFile);
+            }
+
             $this->_execute($this->_getCommand($bSingle));
             if ($bSingle !== true) {
                 break;
@@ -238,6 +254,8 @@ class Testy_Project_Test_Runner {
     /**
      * Enrich the command with placeholders
      *
+     * @param  boolean $bSingle
+     *
      * @return string
      */
     protected function _getCommand($bSingle = false) {
@@ -250,7 +268,11 @@ class Testy_Project_Test_Runner {
 
         $sCommand = trim(preg_replace('!{.*?}!i', '', $sCommand));
         if (empty($this->_sChangeDir) !== true) {
-            $sCommand = 'cd ' . $this->_sChangeDir . '; ' . $sCommand;
+            $sCommand = sprintf('cd %s; %s', $this->_sChangeDir, $sCommand);
+        }
+
+        if (empty($this->_sSyncPath) !== true) {
+            $sCommand = sprintf('rsync -azq %s %s; %s', $this->_sSyncPath->from, $this->_sSyncPath->to, $sCommand);
         }
 
         $aReplace = array(

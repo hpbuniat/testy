@@ -31,12 +31,30 @@ Example with File to Test-Mapping
 }
 </pre>
 
+Example with File to Test-Mapping & Syncing
+<pre>
+"testy": {
+    "path": "~/workspace/testy",
+    "test": "phpunit $file {Testy|Tests} {.php|Test.php}",
+    "test_dir": "~/workspace/testy;",
+    "sync_dir: {
+        "from": ~/workspace/testy,
+        "to":   ~/not-a-vdisk/testy,
+    },
+    "syntax": "php -l $file",
+    "find": "*.php"
+}
+</pre>
+
 Options
 -----
 - path:     The path that is checked for changed files
 - find:     The find-pattern that is used to find changed files
 - syntax:   Command to do a syntax-check (skips testing on error)
 - test_dir: The dir to cd in, before executing the test-command (which is also checked for changes)
+- sync_dir: rsync the project to this directory, replace all paths with 'to'
+    - from: The source
+    - to:   The target
 - repeat: Repeat the test-command without the specific file (which is replaced by ''), default: true
 - test:     The test to execute on changed files
     - placeholders:

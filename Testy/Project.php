@@ -133,7 +133,7 @@ class Testy_Project {
     /**
      * Info-Text, if there is no test command given
      *
-     * @var stirng
+     * @var string
      */
     const MISSING_TEST_COMMAND = 'Test-command missing for project %s';
 
