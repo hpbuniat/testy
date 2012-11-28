@@ -204,10 +204,6 @@ class Testy_Project_Test_Runner {
     public function run() {
         $bSingle = $this->executeSingle();
         foreach ($this->_aFiles as $this->_sFile) {
-            if (empty($this->_sSyncPath) !== true) {
-                $this->_sFile = str_replace($this->_sSyncPath->from, $this->_sSyncPath->to, $this->_sFile);
-            }
-
             $this->_execute($this->_getCommand($bSingle));
             if ($bSingle !== true) {
                 break;
@@ -264,6 +260,10 @@ class Testy_Project_Test_Runner {
             $oTestMapper = new Testy_Project_File_Mapper($sCommand, $this->_sFile);
             $sCommand = $oTestMapper->map()->get();
             unset($oTestMapper);
+        }
+
+        if (empty($this->_sSyncPath) !== true) {
+            $sCommand = str_replace($this->_sSyncPath->from, $this->_sSyncPath->to, $sCommand);
         }
 
         $sCommand = trim(preg_replace('!{.*?}!i', '', $sCommand));
