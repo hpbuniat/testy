@@ -6,6 +6,8 @@
 class Testy_ConfigTest extends PHPUnit_Framework_TestCase {
 
     /**
+     * The test-object
+     *
      * @var Testy_Config
      */
     protected $_object;
