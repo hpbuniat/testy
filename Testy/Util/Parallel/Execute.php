@@ -222,7 +222,6 @@ class Testy_Util_Parallel_Execute {
      * @return Testy_Util_Parallel_Execute
      */
     private function _wait($bAll = false) {
-        $iChildren = count($this->_aProc);
         do {
             $iStatus = null;
             $iPid = pcntl_waitpid(-1, $iStatus, WNOHANG);

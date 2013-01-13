@@ -141,7 +141,7 @@ class Testy_TextUI_Command {
      *
      * @param  array $argv
      *
-     * @return void
+     * @return boolean
      *
      * @codeCoverageIgnore
      */
@@ -176,6 +176,8 @@ class Testy_TextUI_Command {
         catch (Testy_Exception $e) {
             Testy_TextUI_Output::error($e->getMessage());
         }
+
+        return true;
     }
 
     /**
@@ -185,7 +187,7 @@ class Testy_TextUI_Command {
      *
      * @return boolean
      *
-     * @throws Testy_Exception
+     * @throws InvalidArgumentException If there a no valid arguments given
      */
     public function handleArguments(array $aParameters = array()) {
         $oConsole = new Console_Getopt();

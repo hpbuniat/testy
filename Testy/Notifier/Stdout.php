@@ -58,6 +58,6 @@ class Testy_Notifier_Stdout extends Testy_AbstractNotifier {
     public function notify(Testy_Project $oProject, $sStatus, $sText) {
         Testy_TextUI_Output::info($oProject->getName() . ': ' . $sStatus . PHP_EOL . $sText . PHP_EOL);
 
-        return $this;;
+        return $this;
     }
 }

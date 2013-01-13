@@ -54,7 +54,7 @@ class Testy_TextUI_Output {
     /**
      * Print an Error
      *
-     * @param string $message
+     * @param  string $message
      *
      * @return void
      */
@@ -65,10 +65,10 @@ class Testy_TextUI_Output {
     /**
      * Print an Info
      *
-     * @param string $message
-     * @param boolean $bReturn
+     * @param  string $message
+     * @param  boolean $bReturn
      *
-     * @return void
+     * @return string|boolean
      */
     static public function info($message, $bReturn = false) {
         $sPrint = print_r($message, true);
@@ -76,12 +76,12 @@ class Testy_TextUI_Output {
     }
 
     /**
-     * Write to ouput
+     * Write to output
      *
-     * @param string $message
-     * @param boolean $bReturn
+     * @param  string $message
+     * @param  boolean $bReturn
      *
-     * @return void
+     * @return string|boolean
      */
     static public function write($message, $bReturn = false) {
         return print_r($message, $bReturn);
