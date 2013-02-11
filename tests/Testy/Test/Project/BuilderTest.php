@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * testy
@@ -40,12 +39,66 @@
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+namespace Testy\Test\Project;
 
-(defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+
+/**
+ * Test Project-Builder
+ *
+ * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @version Release: @package_version@
+ * @link https://github.com/hpbuniat/testy
+ */
+class BuilderTest extends \PHPUnit_Framework_TestCase {
+
+    /**
+     * An empty dummy config
+     *
+     * @var \stdClass
+     */
+    protected $_oConfig;
+
+    /**
+     * Test-Project Name
+     *
+     * @var string
+     */
+    const PROJECT_NAME = 'foobar';
+
+    /**
+     * Setup
+     */
+    public function setUp() {
+        $this->_oConfig = new \stdClass();
+        $this->_oConfig->test = 'phpunit';
+    }
+
+    /**
+     * Test successful project creation
+     */
+    public function testBuildSuccess() {
+        $oProject = \Testy\Project\Builder::build(self::PROJECT_NAME, $this->_oConfig, array(
+            $this->getMock('\\notifyy\\Adapter\\Stdout')
+        ));
+        $this->assertInstanceOf('\\Testy\\Project', $oProject);
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $oProject->getCommand());
+        $this->assertEquals(self::PROJECT_NAME, $oProject->getName());
+        unset($oProject);
+    }
+
+    /**
+     * Test failure
+     */
+    public function testBuildFailed() {
+        $oConfig = new \stdClass();
+        try {
+            \Testy\Project\Builder::build(self::PROJECT_NAME, $oConfig, array());
+            $this->fail('an exception should have been thrown, if no test-command ist configured');
+        }
+        catch (\Exception $e) {
+            $this->assertStringEndsWith(self::PROJECT_NAME, $e->getMessage());
+        }
+    }
 }
-
-require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-\Testy\TextUI\Command::main();

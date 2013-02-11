@@ -1,0 +1,34 @@
+{
+    "name": "hpbuniat/testy",
+    "description": "testy",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "testy"
+    ],
+    "authors": [
+        {
+            "name": "Hans-Peter Buniat",
+            "email": "hpbuniat@googlemail.com",
+            "role": "lead"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/hpbuniat/notifyy"
+        }
+    ],
+    "homepage": "https://github.com/hpbuniat/testy",
+    "require": {
+        "hpbuniat/notifyy": "dev-master",
+        "c9s/GetOptionKit": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Testy" : ["src/", "tests/"]
+        }
+    },
+    "include-path": [
+        ""
+    ]
+}

@@ -5,15 +5,15 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         bootstrap="Testy/Autoload.php">
+         bootstrap="vendor/autoload.php">
   <testsuites>
     <testsuite name="Testy">
-      <directory suffix="Test.php">Tests</directory>
+      <directory suffix="Test.php">tests</directory>
     </testsuite>
   </testsuites>
   <filter>
     <whitelist addUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">Testy</directory>
+      <directory suffix=".php">src/</directory>
     </whitelist>
   </filter>
 </phpunit>

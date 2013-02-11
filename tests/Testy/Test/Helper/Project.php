@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * testy
@@ -40,12 +39,49 @@
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+namespace Testy\Test\Helper;
 
-(defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+
+/**
+ * Helper-Class to create Mocks of projects-objects
+ */
+class Project {
+
+    /**
+     * Get a plain command-object mock
+     *
+     * @return \Testy\Project
+     */
+    public static function getPlainMock() {
+        $oMockBuilder = new \PHPUnit_Framework_MockObject_Generator();
+        $oMock = $oMockBuilder->getMock('\Testy\Project');
+        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('getName')->will(\PHPUnit_Framework_TestCase::returnValue(\Testy\TextUI\Command::NAME));
+        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('getProjectHash')->will(\PHPUnit_Framework_TestCase::returnValue(md5(rand())));
+
+        return $oMock;
+    }
+
+    /**
+     * Get a command-object, which will return true on isSuccess
+     *
+     * @return \Testy\Project
+     */
+    public static function getEnabled() {
+        $oMock = self::getPlainMock();
+        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('isEnabled')->will(\PHPUnit_Framework_TestCase::returnValue(true));
+
+        return $oMock;
+    }
+
+    /**
+     * Get a command-object, which will return false on isSuccess
+     *
+     * @return \Testy\Project
+     */
+    public static function getDisabled() {
+        $oMock = self::getPlainMock();
+        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('isEnabled')->will(\PHPUnit_Framework_TestCase::returnValue(false));
+
+        return $oMock;
+    }
 }
-
-require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-\Testy\TextUI\Command::main();

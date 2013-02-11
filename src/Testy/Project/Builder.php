@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * testy
@@ -35,17 +34,48 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+namespace Testy\Project;
 
-(defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+
+/**
+ * Builder for projects
+ *
+ * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @version Release: @package_version@
+ * @link https://github.com/hpbuniat/testy
+ */
+class Builder {
+
+    /**
+     * Info after building a project
+     *
+     * @var string
+     */
+    const INFO = 'Started watching a project';
+
+    /**
+     * Build a project
+     *
+     * @param  string $sName
+     * @param  \stdClass $oConfig
+     * @param  array $aNotifiers
+     *
+     * @return \Testy\Project
+     */
+    public static function build($sName, \stdClass $oConfig, $aNotifiers) {
+        $oProject = new \Testy\Project($sName);
+        $oProject->config($oConfig)->setCommand(new \Testy\Util\Command());
+        foreach ($aNotifiers as $oNotifier) {
+            $oProject->addNotifier($oNotifier);
+        }
+
+        return $oProject;
+    }
 }
-
-require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-\Testy\TextUI\Command::main();

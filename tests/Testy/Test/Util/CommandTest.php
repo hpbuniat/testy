@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * testy
@@ -40,12 +39,52 @@
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+namespace Testy\Test\Util;
 
-(defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+
+/**
+ * Test Command-Execution
+ *
+ * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @version Release: @package_version@
+ * @link https://github.com/hpbuniat/testy
+ */
+class CommandTest extends \PHPUnit_Framework_TestCase {
+
+    /**
+     * Test Command-Setting via construct
+     */
+    public function testCommandConstruct() {
+        $o = new \Testy\Util\Command('dir');
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $o->execute());
+        $this->assertTrue($o->isSuccess());
+        $this->assertContains('testy.php', $o->get());
+        $this->assertEquals(0, $o->status());
+    }
+
+    /**
+     * Test Command-Setting via command-method
+     */
+    public function testCommandCommand() {
+        $o = new \Testy\Util\Command();
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $o->setCommand('dir'));
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $o->execute());
+        $this->assertTrue($o->isSuccess());
+        $this->assertContains('testy.php', $o->get());
+        $this->assertEquals(0, $o->status());
+    }
+
+    /**
+     * Test Command-Setting via execute-method
+     */
+    public function testCommandFailure() {
+        $o = new \Testy\Util\Command();
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $o->execute('notExisting'));
+        $this->assertFalse($o->isSuccess());
+        $this->assertEquals(127, $o->status());
+        $this->assertInstanceOf('\\Testy\\Util\\Command', $o->reset());
+        $this->assertEquals(0, $o->status());
+    }
 }
-
-require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-\Testy\TextUI\Command::main();

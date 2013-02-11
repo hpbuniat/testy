@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * testy
@@ -35,17 +34,59 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package testy
+ * @package Testy
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
+namespace Testy\Util\Parallel;
 
-(defined('TESTY_PATH') === true) or define('TESTY_PATH', dirname(__FILE__));
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    set_include_path(TESTY_PATH . PATH_SEPARATOR . get_include_path());
+
+/**
+ * All the Parallel-Transports should implement this interface
+ *
+ * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
+ * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+ * @version Release: @package_version@
+ * @link https://github.com/hpbuniat/Testy
+ */
+interface TransportInterface {
+
+    /**
+     * Setup the transport
+     *
+     * @param  array $aOptions
+     *
+     * @return TransportInterface
+     *
+     * @throws \Testy\Util\Parallel\Transport\Exception
+     */
+    public function setup(array $aOptions = array());
+
+    /**
+     * Read a value from the transport
+     *
+     * @param  string $sId
+     *
+     * @return mixed
+     */
+    public function read($sId);
+
+    /**
+     * Setup the transport
+     *
+     * @param  string $sId
+     * @param  mixed $mData
+     *
+     * @return TransportInterface
+     */
+    public function write($sId, $mData);
+
+    /**
+     * Release the transport & cleanup
+     *
+     * @return TransportInterface
+     */
+    public function free();
 }
-
-require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-\Testy\TextUI\Command::main();
