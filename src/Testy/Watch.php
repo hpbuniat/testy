@@ -109,19 +109,25 @@ class Watch {
     /**
      * Run the watch-loop
      *
-     * @param  \Testy\Util\Parallel\TransportInterface $oTransport
+     * @param  \stdClass $oConfig
      * @param  int $iSleep
      *
      * @return $this
+     *
+     * @throws Exception
      */
-    public function loop(\Testy\Util\Parallel\TransportInterface $oTransport, $iSleep) {
+    public function loop(\stdClass $oConfig, $iSleep) {
+        if (empty($oConfig->adapter) === true) {
+            throw new Exception(Exception::MISSING_TRANSPORT);
+        }
+
         $iTime = $this->_iTimestamp;
         $this->_iTimestamp = time();
         if ($iTime === $this->_iTimestamp) {
             $this->_iTimestamp += $iSleep;
         }
 
-        $oParallel = new \Testy\Util\Parallel\Execute($this->_aStack, $oTransport);
+        $oParallel = \parallely\Builder::build($this->_aStack, $oConfig->adapter, $oConfig->config);
         $oParallel->run(array(
             'check' => array(
                 $iTime

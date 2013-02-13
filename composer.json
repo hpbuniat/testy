@@ -16,11 +16,16 @@
         {
             "type": "git",
             "url": "https://github.com/hpbuniat/notifyy"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/hpbuniat/parallely"
         }
     ],
     "homepage": "https://github.com/hpbuniat/testy",
     "require": {
         "hpbuniat/notifyy": "dev-master",
+        "hpbuniat/parallely": "dev-master",
         "c9s/GetOptionKit": "dev-master"
     },
     "autoload": {
@@ -28,7 +33,7 @@
             "Testy" : ["src/", "tests/"]
         }
     },
-    "include-path": [
-        ""
+    "bin": [
+        "testy.php"
     ]
 }

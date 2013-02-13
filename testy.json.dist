@@ -21,25 +21,32 @@
                 "path": "~/workspace/testy/"
             }
         },
-        "parallel": "SharedMemory",
+        "parallel": {
+            "adapter": "sharedmemory",
+            "config": {
+                "path": "/tmp",
+                "host": "localhost",
+                "port": 11211
+            }
+        },
         "sleep": 5
     },
     "projects": {
         "testy": {
             "path": "~/workspace/testy",
-            "test": "phpunit $file {Testy|Tests} {.php|Test.php}", 
+            "test": "phpunit $file {Testy|Tests} {.php|Test.php}",
             "test_dir": "~/workspace/testy",
             "syntax": "php -l $file",
             "find": "*.php",
             "repeat": true
         },
         "testy-jshint": {
-            "path": "~/workspace/testy", 
+            "path": "~/workspace/testy",
             "test": "jshint $file --config hint-ci.json",
             "find": "*.js"
         },
         "testy-csslint": {
-            "path": "~/workspace/testy", 
+            "path": "~/workspace/testy",
             "test": "node csslint.js --quiet $file",
             "find": "*.css"
         }

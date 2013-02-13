@@ -41,7 +41,6 @@
  */
 namespace Testy;
 
-
 /**
  * Base class for 'userland'-exections
  *
@@ -53,4 +52,8 @@ namespace Testy;
  */
 class Exception extends \Exception {
 
+    /**
+     * Exception-Messages
+     */
+    const MISSING_TRANSPORT = 'The transport for parallely is missing';
 }

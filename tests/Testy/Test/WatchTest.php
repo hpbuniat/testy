@@ -45,7 +45,20 @@ class WatchTest extends \PHPUnit_Framework_TestCase {
      * Test the loop-call
      */
     public function testLoop() {
-        $oMock = $this->getMockBuilder('\\Testy\\Util\\Parallel\\Transport\\File')->getMock();
+        $oMock = new \stdClass();
+        $oMock->adapter = 'file';
+        $oMock->config = new \stdClass();
+        $oMock->config->path = '/tmp';
+
+        $this->assertInstanceOf('\\Testy\\Watch', $this->_object->loop($oMock, 2));
+    }
+
+    /**
+     * Test the loop-call
+     */
+    public function testLoopException() {
+        $this->setExpectedException('\\Testy\\Exception', \Testy\Exception::MISSING_TRANSPORT);
+        $oMock = new \stdClass();
         $this->assertInstanceOf('\\Testy\\Watch', $this->_object->loop($oMock, 2));
     }
 }

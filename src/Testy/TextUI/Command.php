@@ -162,8 +162,7 @@ class Command {
                     }
                 }
 
-                $sTransport = (isset($oConfig->setup->parallel) === true) ? $oConfig->setup->parallel : \Testy\Util\Parallel\Transport\Builder::TRANSPORT_DEFAULT;
-                $oWatch->loop(\Testy\Util\Parallel\Transport\Builder::build($sTransport), $oConfig->setup->sleep);
+                $oWatch->loop($oConfig->setup->parallel, $oConfig->setup->sleep);
                 sleep($oConfig->setup->sleep);
             }
         }

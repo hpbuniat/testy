@@ -12,3 +12,4 @@ node_modules/
 vendor/
 composer.phar
 php_errors.log
+testy.json

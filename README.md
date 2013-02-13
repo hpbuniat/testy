@@ -73,6 +73,8 @@ Testy supports several ways to notify the developer about the result of the exec
 - Growl, which works well with snarl on windows
 - Libnotify, which used notify-send
 
+Testy uses hpbuniat/notifyy.
+
 File-to-Test-Mapping
 -----
 Use the {Search|Replace}-Pattern, as often as needed, to map the Source-File to it's test.
