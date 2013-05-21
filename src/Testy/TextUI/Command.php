@@ -192,7 +192,7 @@ class Command {
 
             $oResult = $oOpts->parse($aParameters);
 
-            if (empty($oResult) !== true) {
+            if (empty($oResult->keys) !== true) {
                 foreach ($oResult as  $sOption => $mValue) {
                     switch ($sOption) {
                         case 'verbose':
