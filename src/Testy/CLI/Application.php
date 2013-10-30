@@ -39,11 +39,16 @@
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
-namespace Testy\TextUI;
+namespace Testy\CLI;
 
+use Symfony\Component\Console\Application as AbstractApplication;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\ArrayInput;
 
 /**
- * Simple Output-Wrapper
+ * Base-Command class to handle arguments and start processing
  *
  * @author Hans-Peter Buniat <hpbuniat@googlemail.com>
  * @copyright 2011-2013 Hans-Peter Buniat <hpbuniat@googlemail.com>
@@ -51,41 +56,69 @@ namespace Testy\TextUI;
  * @version Release: @package_version@
  * @link https://github.com/hpbuniat/testy
  */
-class Output {
+class Application extends AbstractApplication {
 
     /**
-     * Print an Error
+     * The application name
      *
-     * @param  string $message
-     *
-     * @return void
+     * @var string
      */
-    static public function error($message) {
-        print_r('Error: ' . $message . PHP_EOL);
+    const NAME = 'testy';
+
+    /**
+     * The description
+     *
+     * @var string
+     */
+    const DESCRIPTION = 'testy - a continuous test-runner';
+
+    /**
+     * The version
+     *
+     * @var string
+     */
+    const VERSION = '@dev-master';
+
+    /**
+     * Create the application
+     */
+    public function __construct() {
+        parent::__construct(self::NAME, self::VERSION);
     }
 
     /**
-     * Print an Info
+     * Gets the name of the command based on input.
      *
-     * @param  string $message
-     * @param  boolean $bReturn
+     * @param InputInterface $input The input interface
      *
-     * @return string|boolean
+     * @return string The command name
      */
-    static public function info($message, $bReturn = false) {
-        $sPrint = print_r($message, true);
-        return print_r($sPrint . PHP_EOL, $bReturn);
+    protected function getCommandName(InputInterface $input) {
+        return self::NAME;
     }
 
     /**
-     * Write to output
+     * Gets the default commands that should always be available.
      *
-     * @param  string $message
-     * @param  boolean $bReturn
-     *
-     * @return string|boolean
+     * @return array An array of default Command instances
      */
-    static public function write($message, $bReturn = false) {
-        return print_r($message, $bReturn);
+    protected function getDefaultCommands() {
+        $aCommands = parent::getDefaultCommands();
+        $aCommands[] = new Command;
+
+        return $aCommands;
     }
+
+    /**
+     * Overridden so that the application doesn't expect the command
+     * name to be the first argument.
+     */
+    public function getDefinition() {
+        $inputDefinition = parent::getDefinition();
+        $inputDefinition->setArguments();
+
+        return $inputDefinition;
+    }
+
+
 }

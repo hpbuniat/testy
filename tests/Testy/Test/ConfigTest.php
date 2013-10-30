@@ -53,4 +53,43 @@ class ConfigTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals($e->getMessage(), \Testy\Config::ERROR);
         }
     }
+
+    /**
+     * Test the config validaton
+     *
+     * @param  string $sFile
+     * @param  mixed $mException
+     *
+     * @dataProvider validateProvider
+     */
+    public function testValidate($sFile, $mException = null) {
+
+        $mResult = null;
+        try {
+            $oConfig = new \Testy\Config($sFile);
+            $oConfig->validate();
+        }
+        catch (\Testy\Exception $e) {
+            $mResult = $e->getMessage();
+        }
+
+        $this->assertEquals($mException, $mResult);
+    }
+
+    /**
+     * Dataprovider for testValidate
+     *
+     * @return array
+     */
+    public function validateProvider() {
+        return array(
+            array(
+                'testy.json.dist'
+            ),
+            array(
+                'tests/Testy/Fixtures/testy.missing.parallely.json',
+                \Testy\Exception::MISSING_PARALELLY_CONFIG
+            )
+        );
+    }
 }

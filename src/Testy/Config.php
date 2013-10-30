@@ -112,6 +112,22 @@ class Config {
     }
 
     /**
+     * Some validity-checks for the testy-configuration
+     *
+     * @return bool
+     *
+     * @throws \Testy\Exception
+     */
+    public function validate() {
+        $this->_read();
+        if (empty($this->_oConfig->setup->parallel) === true) {
+            throw new Exception(Exception::MISSING_PARALELLY_CONFIG);
+        }
+
+        return true;
+    }
+
+    /**
      * Create the config
      *
      * @return Config
@@ -126,9 +142,6 @@ class Config {
             }
             else {
                 $this->_oConfig = $oConfig;
-                if (defined('VERBOSE') === true and VERBOSE === true) {
-                    \Testy\TextUI\Output::info(self::REFRESH);
-                }
             }
         }
 

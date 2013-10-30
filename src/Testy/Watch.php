@@ -116,7 +116,7 @@ class Watch {
      *
      * @throws Exception
      */
-    public function loop(\stdClass $oConfig, $iSleep) {
+    public function loop(\stdClass $oConfig = null, $iSleep) {
         if (empty($oConfig->adapter) === true) {
             throw new Exception(Exception::MISSING_TRANSPORT);
         }
@@ -126,6 +126,7 @@ class Watch {
         if ($iTime === $this->_iTimestamp) {
             $this->_iTimestamp += $iSleep;
         }
+
 
         $oParallel = \parallely\Builder::build($this->_aStack, $oConfig->adapter, $oConfig->config);
         $oParallel->run(array(

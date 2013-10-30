@@ -345,9 +345,6 @@ class Project {
         catch (\Testy\Project\Test\Exception $oException) {
             $bReturn = false;
             $this->notify(\notifyy\Notifyable::FAILED, self::LINT_ERROR);
-            if (defined('VERBOSE') === true and VERBOSE === true) {
-                \Testy\TextUI\Output::info($oException->getMessage());
-            }
         }
 
         return $bReturn;

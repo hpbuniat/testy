@@ -1,0 +1,23 @@
+{
+    "setup": {
+        "notifiers": {
+            "growl": {
+                "host": "127.0.0.1",
+                "port": "9887",
+                "password": "",
+                "enabled": true
+            }
+        },
+        "sleep": 5
+    },
+    "projects": {
+        "testy": {
+            "path": "~/workspace/testy",
+            "test": "phpunit $file {Testy|Tests} {.php|Test.php}",
+            "test_dir": "~/workspace/testy",
+            "syntax": "php -l $file",
+            "find": "*.php",
+            "repeat": true
+        }
+    }
+}

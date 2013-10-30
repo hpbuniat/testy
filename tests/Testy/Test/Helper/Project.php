@@ -55,7 +55,7 @@ class Project {
     public static function getPlainMock() {
         $oMockBuilder = new \PHPUnit_Framework_MockObject_Generator();
         $oMock = $oMockBuilder->getMock('\Testy\Project');
-        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('getName')->will(\PHPUnit_Framework_TestCase::returnValue(\Testy\TextUI\Command::NAME));
+        $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('getName')->will(\PHPUnit_Framework_TestCase::returnValue(\Testy\CLI\Application::NAME));
         $oMock->expects(\PHPUnit_Framework_TestCase::any())->method('getProjectHash')->will(\PHPUnit_Framework_TestCase::returnValue(md5(rand())));
 
         return $oMock;

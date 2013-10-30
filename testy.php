@@ -48,4 +48,5 @@ if (strpos('@php_bin@', '@php_bin') === 0) {
 
 require_once TESTY_PATH . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-\Testy\TextUI\Command::main();
+$oApplication = new \Testy\CLI\Application();
+$oApplication->run();

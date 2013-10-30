@@ -121,10 +121,6 @@ class Command {
      */
     public function execute($sCommand = null) {
         $this->setCommand($sCommand);
-        if (defined('VERBOSE') === true and VERBOSE === true) {
-            \Testy\TextUI\Output::info($this->_sCommand);
-        }
-
         $rCommand = popen($this->_sCommand, 'r');
         $this->_sReturn = '';
         while (feof($rCommand) !== true) {
@@ -132,10 +128,6 @@ class Command {
         }
 
         $this->_iStatus = pclose($rCommand);
-        if (defined('VERBOSE') === true and VERBOSE === true) {
-            \Testy\TextUI\Output::info($this->_iStatus);
-        }
-
         return $this;
     }
 
